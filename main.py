@@ -339,5 +339,6 @@ if __name__ == '__main__':
             t.start()
             bot.polling(none_stop=True)
         except Exception as e:
-            bot.send_message(243980106, f"Dangerous_Error: {e}")
+            print(f"Dangerous_Error: {e}")
+            bot.send_message(402816936, f"Dangerous_Error: {e}")
             write_logs(f"Dangerous_Error: {e}", folder="error_logs")
