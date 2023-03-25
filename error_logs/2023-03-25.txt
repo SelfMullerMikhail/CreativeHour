@@ -1,0 +1,173 @@
+
+11:26:56 Error: 'tuple' object is not callable 
+func name: __get_cursor 
+args: (<bd_function.BdHelper object at 0x0000023A2AFDCB10>,)
+11:26:56 Error: cannot unpack non-iterable NoneType object 
+func name: get_one_user 
+args: (<bd_function.BdHelper object at 0x0000023A2AFDCB10>, 402816936)
+11:27:22 Error: name 'feefr' is not defined 
+func name: get_one_user 
+args: (<bd_function.BdHelper object at 0x0000015ED468C610>, 402816936)
+11:28:24 Error: Error 
+func name: get_one_user 
+args: (<bd_function.BdHelper object at 0x000001AA377FC850>, 402816936)
+12:22:52 
+Error: near ":22": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002447E03CF10>, '12:22', 8)
+12:23:02 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002447E03CF10>, '12:23', 8)
+12:23:12 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002447E03CF10>, '12:23', 8)
+12:23:27 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001FCA4F66390>, '12:23', 12)
+12:23:37 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001FCA4F66390>, '12:23', 12)
+12:23:47 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001FCA4F66390>, '12:23', 12)
+12:23:57 
+Error: near ":23": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001FCA4F66390>, '12:23', 12)
+12:24:09 
+Error: near ":24": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x0000020B083FA6D0>, '12:24', 10)
+12:24:19 
+Error: near ":24": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x0000020B083FA6D0>, '12:24', 10)
+12:24:40 
+Error: near ":24": syntax error 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001E4BAA5A6D0>, '12:24', 10)
+12:25:57 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001F2CD88D210>, '12:25', 10)
+12:26:45 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:26', 10)
+12:26:55 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:26', 10)
+12:27:05 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:27:15 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:27:25 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:27:35 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:27:45 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:27:55 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000002BA8AEDD250>, '12:27', 10)
+12:28:13 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001B4CF2C66D0>, '12:28', 10)
+12:28:55 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000227D8C4D250>, '12:28', 10)
+12:29:40 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000273867DD2D0>, '12:29', 10)
+12:29:50 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000273867DD2D0>, '12:29', 10)
+12:30:00 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000273867DD2D0>, '12:30', 10)
+12:30:10 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000273867DD2D0>, '12:30', 10)
+12:30:50 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000002403735B410>, '12:30', '10')
+12:31:18 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000001567FA5B410>, '12:30', '10')
+12:31:32 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000001C51751B390>, '12:30', '10')
+12:33:41 
+Error: unrecognized token: "'" 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000001ADFC08B390>, '12:30', '10')
+12:35:16 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000001729D58B390>, '12:30', '10')
+12:35:45 
+Error: name 'info' is not defined 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x00000287A0F4B2D0>, '12:30', '10')
+12:36:06 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x0000023D2AF8B390>, '12:30', '10')
+12:36:15 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x0000018C5756B390>, '12:30', '10')
+12:36:33 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x0000019680B5B390>, '12:30', '10')
+12:36:39 
+Error: You can only execute one statement at a time. 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x0000020221E8B390>, '12:30', '10')
+12:36:45 
+Error: unrecognized token: "'" 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x000001720488B390>, '12:30', '10')
+12:36:48 
+Error: unrecognized token: "'" 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x0000019665AAB390>, '12:30', '10')
+12:37:21 
+Error: unrecognized token: "'" 
+func name: get_ReadyUser_from_time 
+args: (<__main__.BdHelper object at 0x00000158AAD5B350>, '12:30', '10')
+12:48:09 
+Error: no such column: time_zone 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x000001CD3FC75350>, '12:48', 10)
+12:48:46 
+Error: no such column: time_zone 
+func name: get_ReadyUser_from_time 
+args: (<bd_function.BdHelper object at 0x00000298F4186650>, '12:48', 10)

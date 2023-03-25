@@ -1,8 +1,11 @@
 import telebot
 from telebot import types
 from bd_function import BdHelper
+import threading
+import time
 import re
 import datetime as dt
+from loger import write_logs
 
 
 bot = telebot.TeleBot('5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0')
@@ -41,14 +44,20 @@ def join_request(update: types.ChatJoinRequest):
 
 # If users leave chat
 @bot.message_handler(content_types=['left_chat_member'])
-def left_chat_member(message):
-    user_id = message.from_user.id
-    chat_id = message.chat.id
+def left_chat_member(message=None, user_id_=None, chat_id_=None):
+    if message is None:
+        user_id = user_id_
+        chat_id = chat_id_
+    else:
+        user_id = message.from_user.id
+        chat_id = message.chat.id
     data_base.dell_user_from_Active_Chat(chat_id, user_id)
+    data_base.change_active_status(user_id, "False")
     time_min, time_max = data_base.get_time_from_chat(chat_id)
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
     data_base.update_rooms_users_count(chat_id, '-')
     bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
+    print("User left chat")
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
@@ -205,7 +214,8 @@ def end_time(call, time):
 def start_search(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton("Menu"))
-    time_operation, time_zone_hours = data_base.get_time_zone(message.from_user.id)
+    data_base.change_active_status(message.from_user.id, "False")
+    time_zone_hours = data_base.get_time_zone(message.from_user.id)
     time_zone = dt.timedelta(hours=time_zone_hours)
     td = dt.date.today()
     person_info = data_base.get_user_info_from_id(message.from_user.id)
@@ -218,8 +228,8 @@ def start_search(message):
         bot.send_message(message.from_user.id, INCORRECT__TIME_TEXT, reply_markup=markup)
         return
 
-    time_start = eval(f'(dt.datetime.combine(td, time_start_person) {time_operation} time_zone).strftime("%H:%M")')
-    time_end = eval(f'(dt.datetime.combine(td, time_end_person) {time_operation} time_zone).time().strftime("%H:%M")')
+    time_start = (dt.datetime.combine(td, time_start_person) + time_zone).strftime("%H:%M")
+    time_end = (dt.datetime.combine(td, time_end_person) + time_zone).time().strftime("%H:%M")
 
     user_active = data_base.loock_user_into_chats(message.from_user.id)
     if user_active:
@@ -254,6 +264,7 @@ s_time: {i[5]}   e_time {i[6]}"""
         bot.send_message(message.from_user.id, html, reply_markup=markup)
     except:
         pass
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback_query(call):
@@ -304,27 +315,17 @@ def text_holder(message):
         if int(message.from_user.id) in [243980106, 402816936]:
             check_persons(message, markup)
 
-# import time
-# def func():
-#     print("Hello")
-
-# def my_task():
-#     while True:
-#         now = time.localtime()
-
-#         # if now.tm_hour == 10 and now.tm_min == 0:
-#             # здесь можно добавить любые команды, которые нужно выполнить
-#         print('Выполнено в 10:00')
-#         time.sleep(10)
-#         # time.sleep(60) # ждем 60 секунд
 
 
-
+from time_cheker_threading import TimeCheker
 if __name__ == '__main__':
-    try:
-        # t = threading.Thread(target=my_task)
-        # t.daemon = True # фоновый поток
-        # t.start()
-        bot.polling(none_stop=True)
-    except Exception as e:
-        print("Error", e)
+    while True:
+        try:
+            time_cheker = TimeCheker(database=data_base, bot=bot, write_logs=write_logs, left_chat_member=left_chat_member)
+            t = threading.Thread(target=time_cheker.time_cheker)
+            t.daemon = True 
+            t.start()
+            bot.polling(none_stop=True)
+        except Exception as e:
+            bot.send_message(243980106, f"Dangerous_Error: {e}")
+            write_logs(f"Dangerous_Error: {e}", folder="error_logs")

@@ -1,5 +1,6 @@
 import sqlite3
 import datetime as dt
+from loger import write_logs
 
 def decore_bd_function(func):
     def wrapper(*args):
@@ -7,8 +8,8 @@ def decore_bd_function(func):
             info = func(*args)
             return info
         except Exception as e:
-            print(f"\nError: {e}")
-            print(f"func name: {func.__name__} \nargs: {args}")    
+            print(e)
+            write_logs(f"\nError: {e} \nfunc name: {func.__name__} \nargs: {args}", folder="error_logs") 
     return wrapper
 
 class BdHelper():
@@ -52,8 +53,20 @@ class BdHelper():
         if info == []:
             info = 0
         self.__close_cursor_and_conn(cursor, conn)
-        return str(info[0][0][0]), int(info[0][0][1:])
+        return int(info[0][0])
     
+
+    @decore_bd_function
+    def get_ReadyUser_from_time(self, time_now, time_need):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT *
+                            FROM view_persons_in_chats
+                            WHERE time_zone + '{time_now}' = {time_need}""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return info
+    
+
+
     @decore_bd_function
     def get_info_all_users_in_chats(self):
         cursor, conn =  self.__get_cursor()
@@ -97,10 +110,6 @@ class BdHelper():
             cursor, conn =  self.__get_cursor()
             cursor.execute(f"""UPDATE ReadyUsers 
             SET user_time_end = '{active_time_end}' 
-            WHERE user_id = {user_id}""")
-            
-            cursor.execute(f"""UPDATE ReadyUsers 
-            SET ready_flag = 'True' 
             WHERE user_id = {user_id}""")
             self.__close_cursor_and_conn(cursor, conn)
 
@@ -240,9 +249,9 @@ class BdHelper():
         return None
 
     @decore_bd_function
-    def dell_user_from_Active_Chat(self, id_chat, id_user):
+    def dell_user_from_Active_Chat(self, id_chat=None, id_user=None):
         cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""DELETE FROM Active_Chat WHERE id_chat = '{id_chat}' AND id_user = {id_user}; """)
+        cursor.execute(f"""DELETE FROM Active_Chat WHERE id_chat = '{id_chat}' OR id_user = {id_user}; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
 
@@ -265,13 +274,14 @@ class BdHelper():
 
 if __name__ == "__main__":
         a = BdHelper()
-        print(a.get_match('02:00', '20:00'), "True")
-        print(a.get_match('09:00', '11:00'), "True")
-        print(a.get_match('10:00', '12:00'), "True")
-        print(a.get_match('09:00', '12:00'), "True")
-        print(a.get_match('11:00', '12:00'), "False")
-        print(a.get_match('09:00', '10:00'), "False")
-        print(a.get_match('12:00', '13:00'), "False")
-        print(a.get_free_room_id('11:00', '12:00'), "True")
-        print(a.get_free_room_id('10:00', '14:00'))
+        # print(a.get_match('02:00', '20:00'), "True")
+        # print(a.get_match('09:00', '11:00'), "True")
+        # print(a.get_match('10:00', '12:00'), "True")
+        # print(a.get_match('09:00', '12:00'), "True")
+        # print(a.get_match('11:00', '12:00'), "False")
+        # print(a.get_match('09:00', '10:00'), "False")
+        # print(a.get_match('12:00', '13:00'), "False")
+        # print(a.get_free_room_id('11:00', '12:00'), "True")
+        # print(a.get_free_room_id('10:00', '14:00'))
+        print(a.get_ReadyUser_from_time('12:30', '10'))
         
