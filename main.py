@@ -2,7 +2,6 @@ import telebot
 from telebot import types
 from bd_function import BdHelper
 import threading
-import time
 import re
 import datetime as dt
 from loger import write_logs
