@@ -1,0 +1,277 @@
+import sqlite3
+import datetime as dt
+
+def decore_bd_function(func):
+    def wrapper(*args):
+        try:
+            info = func(*args)
+            return info
+        except Exception as e:
+            print(f"\nError: {e}")
+            print(f"func name: {func.__name__} \nargs: {args}")    
+    return wrapper
+
+class BdHelper():
+    def __init__(self):
+        ...
+
+    @decore_bd_function
+    def __get_cursor(self):
+        conn = sqlite3.connect('AsyaApp.db')
+        cursor = conn.cursor()
+        return cursor, conn
+
+    @decore_bd_function
+    def get_one_user(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT count(user_id) 
+                                        FROM ReadyUsers 
+                                        WHERE user_id = {user_id}""").fetchall()[0][0]
+        self.__close_cursor_and_conn(cursor, conn)
+        if info == 0:
+            return None
+        return info
+        
+    @decore_bd_function
+    def get_user_info_from_id(self, id_user):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT * 
+                                FROM ReadyUsers 
+                                WHERE user_id = {id_user}""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return info[0]
+            
+
+    @decore_bd_function
+    def get_time_zone(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""SELECT time_zone 
+                                FROM ReadyUsers
+                                WHERE user_id = {user_id}""") 
+        info = cursor.fetchall()
+        if info == []:
+            info = 0
+        self.__close_cursor_and_conn(cursor, conn)
+        return str(info[0][0][0]), int(info[0][0][1:])
+    
+    @decore_bd_function
+    def get_info_all_users_in_chats(self):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT * FROM view_persons_in_chats""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return info
+        
+    @decore_bd_function
+    def delete_user(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM ReadyUsers
+                                WHERE user_id = {user_id}""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def add_user(self, user_id, user_name):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO 
+            ReadyUsers(user_id, user_name) 
+            VALUES ({user_id}, '{user_name}');""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def set_time_zone(self, user_id, time_zone):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE ReadyUsers 
+        SET time_zone = '{time_zone}' 
+        WHERE user_id = {user_id}""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def set_active_time_start(self, user_id, active_time_start):
+            cursor, conn =  self.__get_cursor()
+            cursor.execute(f"""UPDATE ReadyUsers 
+            SET user_time_start = '{active_time_start}' 
+            WHERE user_id = {user_id}""")
+            self.__close_cursor_and_conn(cursor, conn)
+    
+    @decore_bd_function
+    def set_active_time_end(self, user_id, active_time_end):
+            cursor, conn =  self.__get_cursor()
+            cursor.execute(f"""UPDATE ReadyUsers 
+            SET user_time_end = '{active_time_end}' 
+            WHERE user_id = {user_id}""")
+            
+            cursor.execute(f"""UPDATE ReadyUsers 
+            SET ready_flag = 'True' 
+            WHERE user_id = {user_id}""")
+            self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def loock_user_into_chats(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT * FROM Active_Chat WHERE id_user = {user_id}""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        if info == []:
+            return False
+        return info
+
+    @decore_bd_function  
+    def get_active_users(self, start_time, end_time):
+            cursor, conn =  self.__get_cursor()
+            info = cursor.execute(f"""SELECT user_id, user_name, user_time_start, user_time_end, time_zone
+            FROM ReadyUsers
+            WHERE (ready_flag = 'True' AND(
+                ('{start_time}' <=  user_time_start AND '{end_time}' > user_time_start) OR
+                ('{start_time}' >= user_time_start AND '{end_time}' < user_time_end) OR
+                ('{start_time}'<= user_time_start AND '{end_time}' >= user_time_end) OR
+                ('{start_time}'>= user_time_start AND '{end_time}' <= user_time_end)))""").fetchall()
+            self.__close_cursor_and_conn(cursor, conn)
+            return info
+
+    @decore_bd_function
+    def remove_user(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM ReadyUsers WHERE user_id = {user_id}""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function 
+    def change_active_status(self, user_id, status):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE ReadyUsers SET ready_flag = '{status}' WHERE user_id = {user_id}""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function
+    def get_match(self, start_time, end_time):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT id, user_name, user_time_start, user_time_end, time_zone
+        FROM ReadyUsers
+        WHERE ( ('{start_time}' <=  user_time_start AND '{end_time}' > user_time_start) OR
+            ('{start_time}' >= user_time_start AND '{end_time}' < user_time_end) OR
+            ('{start_time}'<= user_time_start AND '{end_time}' >= user_time_end) OR
+            ('{start_time}'>= user_time_start AND '{end_time}' <= user_time_end))""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return info
+
+    @decore_bd_function
+    def get_free_room_id(self, min_time, max_time):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT id_chat, name
+        FROM Chats
+        WHERE (max_users >= users_now AND(
+            ('{min_time}' <=  min_start_time AND '{max_time}' > min_start_time) OR
+            ('{min_time}' >= min_start_time AND '{min_time}' < max_end_time) OR
+            ('{min_time}'<= min_start_time AND '{max_time}' >= max_end_time) OR
+            ('{min_time}'>= min_start_time AND '{max_time}' <= max_end_time)))
+            ORDER BY users_now DESC""").fetchall()
+        if info == []:
+            info = cursor.execute(f"""SELECT id_chat, name
+        FROM Chats
+        WHERE max_users >= users_now 
+        ORDER BY users_now DESC""").fetchall()
+
+        self.__close_cursor_and_conn(cursor, conn)
+        if info == []:
+            info = [[0, 'No free rooms']]
+        return info[0][0], info[0][1]
+
+    @decore_bd_function
+    def upgrade_room_info_append(self, id_chat, min_start_time, max_end_time):
+        min_time, max_time = self.get_rooms_times(id_chat)
+
+        if dt.time().strftime(min_start_time) < dt.time().strftime(min_time):
+            self.update_room_info_time(id_chat, min_start_time, 'min_start_time')
+
+        if dt.time().strftime(max_end_time) > dt.time().strftime(max_time):
+            self.update_room_info_time(id_chat, max_end_time, 'max_end_time')
+        return None
+        
+    @decore_bd_function
+    def upgrade_room_info_delete(self, id_chat, min_start_time, max_end_time):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE Chats SET min_start_time = '{min_start_time}', 
+                                            max_end_time = '{max_end_time}' WHERE id_chat = '{id_chat}'""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+    
+    @decore_bd_function
+    def add_chat_into_active(self, id_chat, name):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO Chats (id_chat, name, max_users, users_now)
+                            VALUES ({id_chat}, '{name}', 3, 0)""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+    
+    def delete_chat_from_active(self, id_chat):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM Chats WHERE id_chat = '{id_chat}'""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function
+    def get_time_from_chat(self, id_chat):
+            cursor, conn =  self.__get_cursor()
+            info = cursor.execute(f"""SELECT min(user_time_start), max(user_time_end)
+            FROM view_active_chats_info
+            WHERE id_chat = '{id_chat}';""").fetchall()[0]
+            self.__close_cursor_and_conn(cursor, conn)
+            return info[0], info[1]
+
+    @decore_bd_function
+    def update_rooms_users_count(self, id_chat, option: str):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE Chats SET users_now = (users_now {option} 1) WHERE id_chat = '{id_chat}';""")
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+        
+    @decore_bd_function
+    def get_rooms_times(self, id_chat):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT min_start_time, max_end_time
+        FROM Chats
+        WHERE id_chat = '{id_chat}';""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return ("09:00", "11:00")
+
+    @decore_bd_function
+    def update_room_info_time(self, id_chat, time, boarder):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE Chats SET {boarder} = '{time}' WHERE id_chat = '{id_chat}'; """).fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function
+    def dell_user_from_Active_Chat(self, id_chat, id_user):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM Active_Chat WHERE id_chat = '{id_chat}' AND id_user = {id_user}; """)
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function
+    def add_user_to_Active_Chat(self, id_user, id_chat):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO Active_Chat (id_user, id_chat) VALUES ({id_user}, '{id_chat}'); """)
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+
+    @decore_bd_function
+    def __close_cursor_and_conn(self, cursor, conn):
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+
+        
+
+
+if __name__ == "__main__":
+        a = BdHelper()
+        print(a.get_match('02:00', '20:00'), "True")
+        print(a.get_match('09:00', '11:00'), "True")
+        print(a.get_match('10:00', '12:00'), "True")
+        print(a.get_match('09:00', '12:00'), "True")
+        print(a.get_match('11:00', '12:00'), "False")
+        print(a.get_match('09:00', '10:00'), "False")
+        print(a.get_match('12:00', '13:00'), "False")
+        print(a.get_free_room_id('11:00', '12:00'), "True")
+        print(a.get_free_room_id('10:00', '14:00'))
+        
