@@ -149,7 +149,7 @@ def delete_account(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     try:
         print(f"delete_account {message.from_user.id}")
-        item1 = types.KeyboardButton("Sure")
+        item1 = types.KeyboardButton("Sure delete me")
         item2 = types.KeyboardButton("Menu")
         markup.add(item1, item2)
         bot.send_message(message.from_user.id, DELETE_ACCOUNT_TEXT, reply_markup=markup)
@@ -317,7 +317,7 @@ def text_holder(message):
         delete_account(message)
     elif message.text == "Info":
         info(message)
-    elif message.text == "Sure":
+    elif message.text == "Sure delete me":
         sure(message)
     elif message.text == "Create account":
         create_account(message)
