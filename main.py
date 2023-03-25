@@ -56,12 +56,13 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
     data_base.update_rooms_users_count(chat_id, '-')
     bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
-    print("User left chat")
+    print(f"User: {user_id} leave chat: {chat_id}")
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
 def add_chat_into_active(message):
     try:
+        print(f"add_chat_into_active {message.chat.id}")
         chat_id = message.chat.id
         if int(message.from_user.id) == int(243980106):
             data_base.add_chat_into_active(chat_id, message.chat.title)
@@ -75,6 +76,7 @@ def add_chat_into_active(message):
 @bot.message_handler(commands=['delete_chat_from_active'])
 def delete_chat_from_active(message):
     try:
+        print(f"delete_chat_from_active {message.chat.id}")
         chat_id = message.chat.id
         if int(message.from_user.id) == int(243980106):
             data_base.delete_chat_from_active(chat_id)
@@ -87,6 +89,7 @@ def delete_chat_from_active(message):
 @bot.message_handler(commands=['start'])
 def send_start(message):
     try:
+        print(f"start {message.from_user.id}")
         markup = types.ReplyKeyboardMarkup(row_width=2)
         markup.add(types.KeyboardButton("Info"))
         cheker = data_base.get_one_user(message.from_user.id)
@@ -103,6 +106,7 @@ def send_start(message):
 
 def create_account(message):
     try:
+        print(f"create_account {message.from_user.id}")
         data_base.add_user(message.from_user.id , message.from_user.username)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         item1 = types.KeyboardButton("Set time zone")
@@ -113,6 +117,7 @@ def create_account(message):
 
 def set_time_zone(message):
     try:
+        print(f"set_time_zone {message.from_user.id}")
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         for i in range(1, 8):
             item = types.KeyboardButton(f"Set time zone -{i} UTC")
@@ -129,6 +134,7 @@ def menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton("Info"))
     try:
+        print(f"menu {message.from_user.id}")
         item1 = types.KeyboardButton("Set time zone")
         item2 = types.KeyboardButton("Set active time")
         item3 = types.KeyboardButton("Delete account")
@@ -142,6 +148,7 @@ def menu(message):
 def delete_account(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     try:
+        print(f"delete_account {message.from_user.id}")
         item1 = types.KeyboardButton("Sure")
         item2 = types.KeyboardButton("Menu")
         markup.add(item1, item2)
@@ -151,6 +158,7 @@ def delete_account(message):
 
 def sure(message):
     try:
+        print(f"sure {message.from_user.id}")
         id_chat = data_base.loock_user_into_chats(message.from_user.id)
         data_base.update_rooms_users_count(id_chat, "-")
         data_base.delete_user(message.from_user.id)
@@ -163,6 +171,7 @@ def sure(message):
 
 def stop_searching(message):
     try:
+        print(f"stop_searching {message.from_user.id}")
         checker = data_base.get_user_info_from_id(message.from_user.id)
         if checker[7] == "False":
             bot.send_message(message.from_user.id, ALREADY_STOP_SEARCHING_TEXT)
@@ -178,6 +187,7 @@ def stop_searching(message):
 @bot.message_handler(commands=['Info'])
 def info(message):
     try: 
+        print(f"info {message.from_user.id}")
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(types.KeyboardButton("Menu"))
         bot.send_message(message.from_user.id, "Some info", reply_markup=markup)
@@ -185,10 +195,10 @@ def info(message):
         bot.send_message(message.from_user.id, "Info Wrong")
 
 def set_time_zone_func(message, match, markup):
-    
     time_zone = match.group(1)     
     data_base.set_time_zone(message.from_user.id, time_zone)
     bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone}", reply_markup=markup)
+    print(f"set_time_zone_func {message.from_user.id}, {time_zone}")
 
 def set_active_time_panel(call):
     markup = types.InlineKeyboardMarkup()
@@ -205,9 +215,11 @@ def set_active_time_panel(call):
 
 
 def start_time(call, time):
+    print(f"start_time {call.from_user.id}, {time}")
     data_base.set_active_time_start(call.from_user.id, time)
 
 def end_time(call, time):
+    print(f"end_time {call.from_user.id}, {time}")
     data_base.set_active_time_end(call.from_user.id, time)
 
 def start_search(message):
@@ -218,6 +230,7 @@ def start_search(message):
     time_zone = dt.timedelta(hours=time_zone_hours)
     td = dt.date.today()
     person_info = data_base.get_user_info_from_id(message.from_user.id)
+    print(f"Start searching {message.from_user.id}, {person_info[5]}, {person_info[6]}")
     if person_info[5] == None or person_info[6] == None:
         bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT, reply_markup=markup)
         return
