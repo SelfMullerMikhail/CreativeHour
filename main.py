@@ -47,7 +47,7 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
         data_base.set_chats_time(chat_id, "None", "None")
         bot.kick_chat_member(chat_id, user_id)
         bot.unban_chat_member(chat_id, user_id)
-        messages = data_base.get_messages_from_chat(chat_id)
+        messages = data_base.update_rooms_users_count(chat_id)
         for i in messages:
             bot.delete_message(i[0], i[1])
         data_base.delete_chat_messages_from_user (user_id)
@@ -155,9 +155,13 @@ def sure(message):
     try:
         print(f"sure {message.from_user.id}")
         id_chat = data_base.loock_user_into_chats(message.from_user.id)
-        count = bot.get_chat_members_count(id_chat) - 1
-        data_base.update_rooms_users_count(id_chat, count)
+        # count = bot.get_chat_members_count(id_chat) - 1
+        # data_base.update_rooms_users_count(id_chat, count)
+        # left_chat_member(user_id_=message.from_user.id, chat_id=id_chat)
         data_base.delete_user(message.from_user.id)
+        if id_chat:
+            bot.kick_chat_member(chat_id=id_chat, user_id= message.from_user.id)
+            bot.unban_chat_member(chat_id=id_chat, user_id= message.from_user.id)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         item1 = types.KeyboardButton("Create account")
         markup.add(item1)

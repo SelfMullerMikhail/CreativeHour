@@ -1,0 +1,4 @@
+
+00:26:39 Dangerous_Error: catching classes that do not inherit from BaseException is not allowed
+00:34:41 Dangerous_Error: catching classes that do not inherit from BaseException is not allowed
+00:35:48 Dangerous_Error: catching classes that do not inherit from BaseException is not allowed
