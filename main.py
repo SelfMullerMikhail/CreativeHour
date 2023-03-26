@@ -6,6 +6,7 @@ import re
 import datetime as dt
 from loger import write_logs
 from CONSTAINS import *
+import time
 
 
 
@@ -42,6 +43,10 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     count = bot.get_chat_member_count(chat_id) - 1
     data_base.update_rooms_users_count(chat_id, count)
     print(f"User: {user_id} leave chat: {chat_id}")
+    messages = data_base.get_messages_from_user(user_id)
+    for i in messages:
+        bot.delete_message(i[0], i[1])
+    data_base.delete_messages_from_user(user_id)
     if count == 1:
         data_base.set_chats_time(chat_id, "None", "None")
         bot.kick_chat_member(chat_id, user_id)
@@ -280,8 +285,10 @@ def have_not_account(message):
     markap.add(types.KeyboardButton("Create account"))
     bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markap)
 
+
 @bot.message_handler(content_types='text')
 def text_holder(message):
+    data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     match = re.search(r'Set time zone ([-+]\d) UTC', message.text)     
     if message.text not in ["Info", "Create account"] and data_base.get_one_user(message.from_user.id) is None:
@@ -309,7 +316,6 @@ def text_holder(message):
     elif message.text == "Check persons":
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
-
 
 
 from time_cheker_threading import TimeCheker

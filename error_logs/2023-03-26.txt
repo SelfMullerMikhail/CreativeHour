@@ -14,3 +14,4 @@ args: (<bd_function.BdHelper object at 0x000001DAC37D6CD0>, 402816936, '21:00', 
 Error: no such column: count 
 func name: update_rooms_users_count 
 args: (<bd_function.BdHelper object at 0x00000211D004A8D0>, -1001507918351, 0)
+21:57:59 Dangerous_Error: no such column: Jgg

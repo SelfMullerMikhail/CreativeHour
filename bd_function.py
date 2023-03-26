@@ -269,6 +269,24 @@ class BdHelper():
                                                 WHERE id_chat = '{id_chat}'; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
+    
+    def write_messag_history(self, chat_id, user_id, message_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO Messages (chat_id, user_id, message_id) VALUES ({chat_id}, {user_id}, {message_id}); """)
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+    
+    def get_messages_from_user(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        messages = cursor.execute(f"""SELECT chat_id, message_id FROM Messages WHERE user_id = {user_id}; """).fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return messages
+    
+    def delete_messages_from_user(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM Messages WHERE user_id = {user_id}; """)
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
 
     @decore_bd_function
     def __close_cursor_and_conn(self, cursor, conn):
