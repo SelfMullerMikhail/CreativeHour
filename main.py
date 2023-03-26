@@ -169,9 +169,7 @@ def stop_searching(message):
 
 def info(message):
     try: 
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        markup.add(types.KeyboardButton("Menu"))
-        bot.send_message(message.from_user.id, a)
+        menu(message, INFO_TEXT)
     except Exception as e:
         bot.send_message(message.from_user.id, f"Info Wrong: {e}")
 
