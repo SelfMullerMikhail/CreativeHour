@@ -22,7 +22,8 @@ def join_request(update: types.ChatJoinRequest):
     data_base.change_active_status(user_id, "False")
     data_base.add_user_to_Active_Chat(user_id, chat_id)
     data_base.upgrade_room_info_append(user_id, info[5], info[6])
-    data_base.update_rooms_users_count(chat_id, '+')
+    count = bot.get_chat_member_count(chat_id) - 1
+    data_base.update_rooms_users_count(chat_id, count)
 
 # If users leave chat
 @bot.message_handler(content_types=['left_chat_member'])
@@ -37,9 +38,15 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     data_base.change_active_status(user_id, "False")
     time_min, time_max = data_base.get_time_from_chat(chat_id)
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
-    data_base.update_rooms_users_count(chat_id, '-')
     bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
+    count = bot.get_chat_member_count(chat_id) - 1
+    data_base.update_rooms_users_count(chat_id, count)
     print(f"User: {user_id} leave chat: {chat_id}")
+    if count == 1:
+        data_base.set_chats_time(chat_id, "None", "None")
+        bot.kick_chat_member(chat_id, user_id)
+        bot.unban_chat_member(chat_id, user_id)
+        print(f"Last user: {user_id} leave chat: {chat_id}")
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
@@ -143,7 +150,8 @@ def sure(message):
     try:
         print(f"sure {message.from_user.id}")
         id_chat = data_base.loock_user_into_chats(message.from_user.id)
-        data_base.update_rooms_users_count(id_chat, "-")
+        count = bot.get_chat_members_count(id_chat) - 1
+        data_base.update_rooms_users_count(id_chat, count)
         data_base.delete_user(message.from_user.id)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         item1 = types.KeyboardButton("Create account")
@@ -166,12 +174,6 @@ def stop_searching(message):
         bot.send_message(message.from_user.id, STOP_SEARCHING_TEXT, reply_markup=markup)
     except Exception("stop_searching Wrong") as e:
         bot.send_message(message.from_user.id, e)
-
-def info(message):
-    try: 
-        menu(message, INFO_TEXT)
-    except Exception as e:
-        bot.send_message(message.from_user.id, f"Info Wrong: {e}")
 
 def set_time_zone_func(message, match, markup):
     time_zone = match.group(1)     
@@ -229,18 +231,17 @@ def start_search(message):
     if user_active:
         bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
         return
-    data_base.set_active_time_start(message.from_user.id, time_start)
-    data_base.set_active_time_end(message.from_user.id, time_end)
     bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
     data_base.change_active_status(message.from_user.id, "True")
     users = data_base.get_match(time_start, time_end)
     if len(users) > 1:
         active_users = data_base.get_active_users(time_start, time_end)
+
         chat_id, name_room = data_base.get_free_room_id(time_start, time_end)
         if chat_id == 0:
             bot.send_message(message.from_user.id, "No free rooms")
             return
-        link = bot.create_chat_invite_link(chat_id= chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
+        link = bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
         for user in active_users:
             bot.send_message(user[0], f"{LINK_INVITE_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
             bot.send_message(user[0], link.invite_link)
@@ -298,7 +299,7 @@ def text_holder(message):
     elif message.text == "Delete account":
         delete_account(message)
     elif message.text == "Info":
-        info(message)
+        menu(message, INFO_TEXT)
     elif message.text == "Sure delete me":
         sure(message)
     elif message.text == "Create account":

@@ -175,7 +175,7 @@ class BdHelper():
         if info == []:
             info = cursor.execute(f"""SELECT id_chat, name
         FROM Chats
-        WHERE max_users >= users_now 
+        WHERE max_users >= users_now AND min_start_time = 'None' AND max_end_time = 'None'
         ORDER BY users_now DESC""").fetchall()
 
         self.__close_cursor_and_conn(cursor, conn)
@@ -226,9 +226,9 @@ class BdHelper():
             return info[0], info[1]
 
     @decore_bd_function
-    def update_rooms_users_count(self, id_chat, option: str):
+    def update_rooms_users_count(self, id_chat, count):
         cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""UPDATE Chats SET users_now = (users_now {option} 1) WHERE id_chat = '{id_chat}';""")
+        cursor.execute(f"""UPDATE Chats SET users_now = {count} WHERE id_chat = '{id_chat}';""")
         self.__close_cursor_and_conn(cursor, conn)
         return None
         
@@ -259,6 +259,14 @@ class BdHelper():
     def add_user_to_Active_Chat(self, id_user, id_chat):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""INSERT INTO Active_Chat (id_user, id_chat) VALUES ({id_user}, '{id_chat}'); """)
+        self.__close_cursor_and_conn(cursor, conn)
+        return None
+    
+    def set_chats_time(self, id_chat, time_start, time_end):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""UPDATE Chats SET min_start_time = '{time_start}', 
+                                                max_end_time = '{time_end}'
+                                                WHERE id_chat = '{id_chat}'; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
 

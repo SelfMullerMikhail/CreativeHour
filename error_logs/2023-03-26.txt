@@ -9,3 +9,8 @@ args: (<bd_function.BdHelper object at 0x000001DAC37D6CD0>, 402816936, '21:00', 
 19:30:20 Dangerous_Error, time_cheker: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't remove chat owner
 19:31:56 Dangerous_Error, time_cheker: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't remove chat owner
 19:35:31 Dangerous_Error, time_cheker: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't remove chat owner
+21:01:29 Dangerous_Error: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+21:27:22 
+Error: no such column: count 
+func name: update_rooms_users_count 
+args: (<bd_function.BdHelper object at 0x00000211D004A8D0>, -1001507918351, 0)
