@@ -276,15 +276,15 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return None
     
-    def get_messages_from_user(self, user_id):
+    def get_messages_from_chat(self, chat_id):
         cursor, conn =  self.__get_cursor()
-        messages = cursor.execute(f"""SELECT chat_id, message_id FROM Messages WHERE user_id = {user_id}; """).fetchall()
+        messages = cursor.execute(f"""SELECT chat_id, message_id FROM Messages WHERE chat_id = {chat_id}; """).fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return messages
     
-    def delete_messages_from_user(self, user_id):
+    def delete_chat_messages_from_user(self, chat_id):
         cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""DELETE FROM Messages WHERE user_id = {user_id}; """)
+        cursor.execute(f"""DELETE FROM Messages WHERE chat_id = {chat_id}; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
 
