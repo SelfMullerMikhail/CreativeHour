@@ -5,30 +5,13 @@ import threading
 import re
 import datetime as dt
 from loger import write_logs
+from CONSTAINS import *
 
 
-bot = telebot.TeleBot('5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0')
+
+
+bot = telebot.TeleBot(API)
 data_base = BdHelper()
-DELETE_ACCOUNT_TEXT = "Are you sure?"
-DELETED_ACCOUNT_TEXT = "Your account has been deleted"
-START_ACTIVE_TIME_TEXT = "We will soon find your creative group."
-DONT_FOUND_MATCH_TEXT = "Don't wait to start being creative!"
-ALREADY_IN_GROUP_TEXT = """You are already in a group. 
-You can continue creating in there or you can leave it and find a new match."""
-HAVE_NO_ACCOUNT_TEXT = "You don't have an account yet. Create one to start being creative."
-APPEND_IN_GROUP_TEXT = "Check the pinned message!"
-FIRE_ACOOUNT_TEXT = "You have been on creative fire today. Come back tomorrow."
-REMOVED_FROM_GROUP_TEXT = "You have been removed from the group."
-ALREADY_STOP_SEARCHING_TEXT = "You already stop to searching"
-APPROVE_TO_JOIN_TEXT = "You have been approved to join the chat!"
-NEED_TIME_ZONE_TEXT = "I need your timezone"
-CHOOSE_TIME_ZONE_TEXT = "Choose your time zone"
-INCORRECT__TIME_TEXT = "Start time cannot equal or exceed finish time"
-CHOOSE_MOUTION_TEXT = "Choose what you want to do"
-STOP_SEARCHING_TEXT = "You have stopped searching"
-SET_ACTIVE_TIME_TEXT = "You should to set active time"
-LINK_INVITE_TEXT = "Yours link for time"
-
 
 @bot.message_handler(content_types=['new_chat_members'])
 def join_request(update: types.ChatJoinRequest):
@@ -64,9 +47,9 @@ def add_chat_into_active(message):
     try:
         print(f"add_chat_into_active {message.chat.id}")
         chat_id = message.chat.id
-        if int(message.from_user.id) == int(243980106):
+        if int(message.from_user.id) in TOTAL_ADMINS:
             data_base.add_chat_into_active(chat_id, message.chat.title)
-            bot.send_message(chat_id, "Chat added")
+            bot.send_message(chat_id, f"Chat added chat_id: {chat_id}")
         else:
             bot.send_message(chat_id, "You can't do it")
     except Exception("add_chat_into_active Wrong") as e:
@@ -78,7 +61,7 @@ def delete_chat_from_active(message):
     try:
         print(f"delete_chat_from_active {message.chat.id}")
         chat_id = message.chat.id
-        if int(message.from_user.id) == int(243980106):
+        if int(message.from_user.id) in  TOTAL_ADMINS:
             data_base.delete_chat_from_active(chat_id)
             bot.send_message(chat_id, "Chat deleted")
         else:
@@ -130,20 +113,20 @@ def set_time_zone(message):
     except Exception("Set_time_zone Wrong") as e:
         bot.send_message(message.from_user.id, e)
 
-def menu(message):
+def menu(message, text):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    markup.add(types.KeyboardButton("Info"))
     try:
         print(f"menu {message.from_user.id}")
+        markup.add(types.KeyboardButton("Info"))
         item1 = types.KeyboardButton("Set time zone")
         item2 = types.KeyboardButton("Set active time")
         item3 = types.KeyboardButton("Delete account")
         item4 = types.KeyboardButton("Stop searching")
         markup.add(item1, item2, item3, item4)
-        msg = CHOOSE_MOUTION_TEXT
     except :
         bot.send_message(message.from_user.id, "menu Wrong")
-    bot.send_message(message.from_user.id, msg, reply_markup=markup)
+    bot.send_message(message.from_user.id, text, reply_markup=markup)
+
 
 def delete_account(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -184,20 +167,19 @@ def stop_searching(message):
     except Exception("stop_searching Wrong") as e:
         bot.send_message(message.from_user.id, e)
 
-@bot.message_handler(commands=['Info'])
 def info(message):
     try: 
-        print(f"info {message.from_user.id}")
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(types.KeyboardButton("Menu"))
-        bot.send_message(message.from_user.id, "Some info", reply_markup=markup)
-    except:
-        bot.send_message(message.from_user.id, "Info Wrong")
+        bot.send_message(message.from_user.id, a)
+    except Exception as e:
+        bot.send_message(message.from_user.id, f"Info Wrong: {e}")
 
 def set_time_zone_func(message, match, markup):
     time_zone = match.group(1)     
     data_base.set_time_zone(message.from_user.id, time_zone)
-    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone}", reply_markup=markup)
+    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone}")
+    menu(message, CHOOSE_MOUTION_TEXT)
     print(f"set_time_zone_func {message.from_user.id}, {time_zone}")
 
 def set_active_time_panel(call):
@@ -216,16 +198,18 @@ def set_active_time_panel(call):
 
 def start_time(call, time):
     print(f"start_time {call.from_user.id}, {time}")
+    menu(call, f"Your start time: {time}")
     data_base.set_active_time_start(call.from_user.id, time)
 
 def end_time(call, time):
     print(f"end_time {call.from_user.id}, {time}")
+    menu(call, f"Your end time: {time}")
     data_base.set_active_time_end(call.from_user.id, time)
 
 def start_search(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton("Menu"))
-    data_base.change_active_status(message.from_user.id, "False")
+    data_base.change_active_status(message.from_user.id, "True")
     time_zone_hours = data_base.get_time_zone(message.from_user.id)
     time_zone = dt.timedelta(hours=time_zone_hours)
     td = dt.date.today()
@@ -271,8 +255,8 @@ def check_persons(message, markup):
         html = ""
         for i in info:
             user = f"""name: {i[1]}  id: {i[0]}   time_zone: {i[2]} id_chat:{i[3]}   name_chat: {i[4]} 
-s_time: {i[5]}   e_time {i[6]}"""
-            html = html + user + "\n"
+s_time: {i[5]}   e_time {i[6]} \n"""
+            html = str(html) + str(user)
         bot.send_message(message.from_user.id, html, reply_markup=markup)
     except:
         pass
@@ -308,7 +292,7 @@ def text_holder(message):
     if match:
         set_time_zone_func(message, match, markup)
     elif message.text == "Menu":
-        menu(message)
+        menu(message, CHOOSE_MOUTION_TEXT)
     elif message.text == "Set time zone":
         set_time_zone(message) 
     elif message.text == "Set active time":
@@ -324,7 +308,7 @@ def text_holder(message):
     elif message.text == "Stop searching":
         stop_searching(message)
     elif message.text == "Check persons":
-        if int(message.from_user.id) in [243980106, 402816936]:
+        if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
 
 
@@ -340,5 +324,5 @@ if __name__ == '__main__':
             bot.polling(none_stop=True)
         except Exception as e:
             print(f"Dangerous_Error: {e}")
-            bot.send_message(402816936, f"Dangerous_Error: {e}")
+            bot.send_message(ADMIN_IP_MISHA, f"Dangerous_Error: {e}")
             write_logs(f"Dangerous_Error: {e}", folder="error_logs")
