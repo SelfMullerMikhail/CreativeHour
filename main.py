@@ -44,13 +44,6 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
     print(f"User: {user_id} leave chat: {chat_id}")
-    messages = data_base.get_messages_from_chat(chat_id)
-    for i in messages:
-        try:
-            bot.delete_message(i[0], i[1])
-        except:
-            bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
-    data_base.delete_chat_messages_from_user (user_id)
     
     if count == 1:
         data_base.set_chats_time(chat_id, "None", "None")
@@ -59,6 +52,13 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
             bot.unban_chat_member(chat_id, user_id)
         except:
             print(bot.send_message(ADMIN_IP_MISHA, f"Error kick_chat_member: {user_id}"))
+        messages = data_base.get_messages_from_chat(chat_id)
+        for i in messages:
+            try:
+                bot.delete_message(i[0], i[1])
+            except:
+                bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
+        data_base.delete_chat_messages_from_user (user_id)
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
