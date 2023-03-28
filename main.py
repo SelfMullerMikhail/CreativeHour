@@ -41,7 +41,6 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
     bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
     count = bot.get_chat_member_count(chat_id) 
-    print(count)
     count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
     print(f"User: {user_id} leave chat: {chat_id}")
@@ -53,7 +52,7 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
             bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
     data_base.delete_chat_messages_from_user (user_id)
     
-    if count +1 == 1:
+    if count == 1:
         data_base.set_chats_time(chat_id, "None", "None")
         try:
             bot.kick_chat_member(chat_id, user_id)
