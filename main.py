@@ -248,7 +248,7 @@ def start_search(message):
     bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
     data_base.change_active_status(message.from_user.id, "True")
     users = data_base.get_match(time_start, time_end)
-    if len(users) == 1:
+    if len(users) > 1:
         active_users = data_base.get_active_users(time_start, time_end)
 
         chat_id, name_room = data_base.get_free_room_id(time_start, time_end)
