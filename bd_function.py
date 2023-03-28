@@ -81,16 +81,19 @@ class BdHelper():
                                 WHERE user_id = {user_id}""")
         self.__close_cursor_and_conn(cursor, conn)
 
+    @decore_bd_function
     def dell_all_Active_Chat(self):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""DELETE FROM Active_Chat""")
         self.__close_cursor_and_conn(cursor, conn)
 
+    @decore_bd_function
     def dell_all_ReadyUsers(self):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""DELETE FROM ReadyUsers""")
         self.__close_cursor_and_conn(cursor, conn)
-
+    
+    @decore_bd_function
     def dell_all_Messages(self):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""DELETE FROM Messages""")
