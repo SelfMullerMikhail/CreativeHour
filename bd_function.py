@@ -9,7 +9,7 @@ def decore_bd_function(func):
             return info
         except Exception as e:
             print(e)
-            write_logs(f"\nError: {e} \nfunc name: {func.__name__} \nargs: {args}", folder="error_logs") 
+            # write_logs(f"\nError: {e} \nfunc name: {func.__name__} \nargs: {args}", folder="error_logs") 
     return wrapper
 
 class BdHelper():
