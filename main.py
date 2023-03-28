@@ -294,9 +294,32 @@ def have_not_account(message):
     markap.add(types.KeyboardButton("Create account"))
     bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markap)
 
+def dell_all():
+        users = data_base.get_all_users()
+        chats = data_base.get_all_chats()
+        for chat in chats:
+            for user in users:
+                try:
+                    bot.kick_chat_member(chat[0], user[0])
+                    bot.unban_chat_member(chat[0], user[0])
+                except:
+                    pass
+        data_base.dell_all_ReadyUsers()
+        data_base.dell_all_Active_Chat()
+        data_base.dell_all_Messages()
+
+        bot.kick_chat_member
 
 @bot.message_handler(content_types='text')
 def text_holder(message):
+    if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA:
+        dell_all()
+        return
+    elif message.text == "Version":
+        bot.send_message(ADMIN_IP_MISHA.id, "Version 3.8")
+        return
+
+
     data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     match = re.search(r'Set time zone ([-+]\d) UTC', message.text)     
@@ -329,6 +352,7 @@ def text_holder(message):
     elif message.text == "Check persons":
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
+            return
 
 
 from time_cheker_threading import TimeCheker

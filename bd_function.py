@@ -81,6 +81,21 @@ class BdHelper():
                                 WHERE user_id = {user_id}""")
         self.__close_cursor_and_conn(cursor, conn)
 
+    def dell_all_Active_Chat(self):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM Active_Chat""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    def dell_all_ReadyUsers(self):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM ReadyUsers""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    def dell_all_Messages(self):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""DELETE FROM Messages""")
+        self.__close_cursor_and_conn(cursor, conn)
+
     @decore_bd_function
     def add_user(self, user_id, user_name):
         cursor, conn =  self.__get_cursor()
@@ -262,6 +277,7 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return None
     
+    @decore_bd_function
     def set_chats_time(self, id_chat, time_start, time_end):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""UPDATE Chats SET min_start_time = '{time_start}', 
@@ -270,23 +286,39 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return None
     
+    @decore_bd_function
     def write_messag_history(self, chat_id, user_id, message_id):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""INSERT INTO Messages (chat_id, user_id, message_id) VALUES ({chat_id}, {user_id}, {message_id}); """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
     
+    @decore_bd_function
     def get_messages_from_chat(self, chat_id):
         cursor, conn =  self.__get_cursor()
         messages = cursor.execute(f"""SELECT chat_id, message_id FROM Messages WHERE chat_id = {chat_id}; """).fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return messages
-    
+    @decore_bd_function
     def delete_chat_messages_from_user(self, chat_id):
         cursor, conn =  self.__get_cursor()
         cursor.execute(f"""DELETE FROM Messages WHERE chat_id = {chat_id}; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
+    
+    @decore_bd_function
+    def get_all_users(self):
+        cursor, conn =  self.__get_cursor()
+        users = cursor.execute(f"""SELECT id_user, name FROM Users; """).fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return users
+    
+    @decore_bd_function
+    def get_all_chats(self):
+        cursor, conn =  self.__get_cursor()
+        chats = cursor.execute(f"""SELECT id_chat, name FROM Chats; """).fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return chats
 
     @decore_bd_function
     def __close_cursor_and_conn(self, cursor, conn):
