@@ -300,6 +300,10 @@ def dell_all():
         for chat in chats:
             for user in users:
                 try:
+                    bot.delete_message(chat[0], user[1])
+                except:
+                    pass
+                try:
                     bot.kick_chat_member(chat[0], user[0])
                     bot.unban_chat_member(chat[0], user[0])
                 except:
