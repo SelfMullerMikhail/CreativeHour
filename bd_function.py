@@ -302,6 +302,7 @@ class BdHelper():
         messages = cursor.execute(f"""SELECT chat_id, message_id FROM Messages WHERE chat_id = {chat_id}; """).fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return messages
+    
     @decore_bd_function
     def delete_chat_messages_from_user(self, chat_id):
         cursor, conn =  self.__get_cursor()

@@ -275,6 +275,7 @@ s_time: {i[5]}   e_time {i[6]} \n"""
         pass
 
 
+
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback_query(call):
     if data_base.get_one_user(call.from_user.id) != None:
@@ -311,8 +312,17 @@ def dell_all():
         data_base.dell_all_ReadyUsers()
         data_base.dell_all_Active_Chat()
         data_base.dell_all_Messages()
-
         bot.kick_chat_member
+
+def dell_all_message_from_one_chat(message):
+    messages = data_base.get_messages_from_chat(message.chat.id)
+    for message in messages:
+        try:
+            bot.delete_message(message.chat.id, message[0])
+        except:
+            pass
+    data_base.delete_chat_messages_from_user(message.chat.id)
+
 
 @bot.message_handler(content_types='text')
 def text_holder(message):
@@ -320,9 +330,11 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(ADMIN_IP_MISHA, "Version 4.2")
+        bot.send_message(ADMIN_IP_MISHA, "Version 4.3")
         return
-
+    elif message.text == "Dell all message" and message.from_user.id != ADMIN_IP_MISHA:
+        dell_all_message_from_one_chat(message)
+        return
 
     data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -357,6 +369,7 @@ def text_holder(message):
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
             return
+        
 
 
 from time_cheker_threading import TimeCheker
