@@ -40,18 +40,26 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     time_min, time_max = data_base.get_time_from_chat(chat_id)
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
     bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
-    count = bot.get_chat_member_count(chat_id) - 1
+    count = bot.get_chat_member_count(chat_id) 
+    print(count)
+    count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
     print(f"User: {user_id} leave chat: {chat_id}")
-    if count == 1:
-        data_base.set_chats_time(chat_id, "None", "None")
-        bot.kick_chat_member(chat_id, user_id)
-        bot.unban_chat_member(chat_id, user_id)
-        messages = data_base.update_rooms_users_count(chat_id)
-        for i in messages:
+    messages = data_base.get_messages_from_chat(chat_id)
+    for i in messages:
+        try:
             bot.delete_message(i[0], i[1])
-        data_base.delete_chat_messages_from_user (user_id)
-        print(f"Last user: {user_id} leave chat: {chat_id}")
+        except:
+            bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
+    data_base.delete_chat_messages_from_user (user_id)
+    
+    if count +1 == 1:
+        data_base.set_chats_time(chat_id, "None", "None")
+        try:
+            bot.kick_chat_member(chat_id, user_id)
+            bot.unban_chat_member(chat_id, user_id)
+        except:
+            print(bot.send_message(ADMIN_IP_MISHA, f"Error kick_chat_member: {user_id}"))
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
@@ -126,9 +134,12 @@ def set_time_zone(message):
         bot.send_message(message.from_user.id, e)
 
 def menu(message, text):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     try:
-        print(f"menu {message.from_user.id}")
+        if data_base.get_one_user(message.from_user.id) is None:
+            have_not_account(message)
+            print(f"menu {message.from_user.id}")
+            return
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(types.KeyboardButton("Info"))
         item1 = types.KeyboardButton("Set time zone")
         item2 = types.KeyboardButton("Set active time")
@@ -243,7 +254,7 @@ def start_search(message):
     bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
     data_base.change_active_status(message.from_user.id, "True")
     users = data_base.get_match(time_start, time_end)
-    if len(users) > 1:
+    if len(users) == 1:
         active_users = data_base.get_active_users(time_start, time_end)
 
         chat_id, name_room = data_base.get_free_room_id(time_start, time_end)
@@ -310,6 +321,10 @@ def text_holder(message):
     elif message.text == "Delete account":
         delete_account(message)
     elif message.text == "Info":
+        if data_base.get_one_user(message.from_user.id) is None:
+            have_not_account(message)
+            print(f"menu {message.from_user.id}")
+            return
         menu(message, INFO_TEXT)
     elif message.text == "Sure delete me":
         sure(message)
