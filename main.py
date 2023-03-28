@@ -320,7 +320,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(ADMIN_IP_MISHA.id, "Version 3.8")
+        bot.send_message(ADMIN_IP_MISHA, "Version 3.9")
         return
 
 
