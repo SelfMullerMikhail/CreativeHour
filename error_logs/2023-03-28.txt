@@ -106,3 +106,6 @@
 14:36:08 Dangerous_Error, time_cheker: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't remove chat owner
 14:36:41 Dangerous_Error, time_cheker: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: can't remove chat owner
 14:46:52 Dangerous_Error: 'NoneType' object is not iterable
+16:03:24 Dangerous_Error: 'NoneType' object is not iterable
+16:04:20 Dangerous_Error: 'NoneType' object is not iterable
+16:04:41 Dangerous_Error: 'NoneType' object is not iterable

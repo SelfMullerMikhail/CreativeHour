@@ -312,7 +312,7 @@ class BdHelper():
     @decore_bd_function
     def get_all_users(self):
         cursor, conn =  self.__get_cursor()
-        users = cursor.execute(f"""SELECT id_user, name FROM ReadyUsers; """).fetchall()
+        users = cursor.execute(f"""SELECT user_id FROM ReadyUsers; """).fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return users
     
