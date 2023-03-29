@@ -127,10 +127,10 @@ def set_time_zone(message):
     except Exception("Set_time_zone Wrong") as e:
         bot.send_message(message.from_user.id, e)
 
-def menu(message, text=""):
+def menu(message):
     try:
         if data_base.get_one_user(message.from_user.id) is None:
-            have_not_account(message, text)
+            have_not_account(message, HAVE_NO_ACCOUNT_TEXT)
             return
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         item1 = types.KeyboardButton("Info")
@@ -139,7 +139,8 @@ def menu(message, text=""):
         item4 = types.KeyboardButton("Delete account")
         item5 = types.KeyboardButton("Stop searching")
         markup.add(item1, item2, item3, item4, item5)
-        bot.send_message(message.from_user.id, "-", reply_markup=markup)
+        # bot.send_message(message.from_user.id, "-", reply_markup=markup)
+        return markup
     except :
         bot.send_message(message.from_user.id, "menu Wrong")
     
@@ -190,11 +191,13 @@ def stop_searching(message):
         bot.send_message(message.from_user.id, e)
 
 def set_time_zone_func(message, match):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+
     time_zone = match.group(1)     
     data_base.set_time_zone(message.from_user.id, time_zone)
-    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ")
-    menu(message, CHOOSE_MOUTION_TEXT)
-    print(f"set_time_zone_func {message.from_user.id}, {time_zone}")
+    markup = menu(message)
+    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ", reply_markup=markup)
+
 
 def set_active_time_panel(call):
     markup = types.InlineKeyboardMarkup()
@@ -212,12 +215,14 @@ def set_active_time_panel(call):
 
 def start_time(call, time):
     print(f"start_time {call.from_user.id}, {time}")
-    menu(call, f"Your start time: {time}")
+    markup = menu(call)
+    bot.send_message(call.from_user.id, f"Your start time: {time}", reply_markup=markup)
     data_base.set_active_time_start(call.from_user.id, time)
 
 def end_time(call, time):
     print(f"end_time {call.from_user.id}, {time}")
-    menu(call, f"Your end time: {time}")
+    markup = menu(call)
+    bot.send_message(call.from_user.id, f"Your end time: {time}", reply_markup=markup)
     data_base.set_active_time_end(call.from_user.id, time)
 
 def start_search(message):
@@ -336,7 +341,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 4.9")
+        bot.send_message(message.chat.id, "Version 5.0")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -360,7 +365,8 @@ def text_holder(message):
     elif message.text == "Delete account":
         delete_account(message)
     elif message.text == "Info":
-        menu(message, INFO_TEXT)
+        markup = menu(message)
+        bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT, reply_markup=markup)
     elif message.text == "Sure delete me":
         sure(message)
     elif message.text == "Create account":
