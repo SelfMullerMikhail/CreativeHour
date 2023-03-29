@@ -46,7 +46,7 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     print(f"User: {user_id} leave chat: {chat_id}")
     
     if count == 1:
-        data_base.set_chats_time(chat_id, "None", "None")
+        data_base.set_chats_time(chat_id, "NULL", "NULL")
         messages = data_base.get_messages_from_chat(chat_id)
         for i in messages:
             try:
@@ -189,10 +189,10 @@ def stop_searching(message):
     except Exception("stop_searching Wrong") as e:
         bot.send_message(message.from_user.id, e)
 
-def set_time_zone_func(message, match, markup):
+def set_time_zone_func(message, match):
     time_zone = match.group(1)     
     data_base.set_time_zone(message.from_user.id, time_zone)
-    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone}")
+    bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ")
     menu(message, CHOOSE_MOUTION_TEXT)
     print(f"set_time_zone_func {message.from_user.id}, {time_zone}")
 
@@ -207,7 +207,7 @@ def set_active_time_panel(call):
     for i in range(0, len(column_1)):
         markup.row(column_1[i], column_2[i])
     markup.add(types.InlineKeyboardButton("Start", callback_data="startsearching"))
-    bot.send_message(call.chat.id, "Choose time", reply_markup=markup)
+    bot.send_message(call.chat.id, INSTRUCTION_FOR_SET_ACTIVE_TIME, reply_markup=markup)
 
 
 def start_time(call, time):
@@ -226,39 +226,49 @@ def start_search(message):
     data_base.change_active_status(message.from_user.id, "True")
     time_zone_hours = data_base.get_time_zone(message.from_user.id)
     time_zone = dt.timedelta(hours=time_zone_hours)
-    td = dt.date.today()
+
     person_info = data_base.get_user_info_from_id(message.from_user.id)
     print(f"Start searching {message.from_user.id}, {person_info[5]}, {person_info[6]}")
+
     if person_info[5] == None or person_info[6] == None:
         bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT, reply_markup=markup)
         return
-    time_start_person = dt.datetime.strptime(person_info[5], '%H:%M').time() 
+    
+    time_start_person = dt.datetime.strptime(person_info[5], '%H:%M').time()
+    time_start_person = time_start_person.strftime('%H:%M') 
     time_end_person = dt.datetime.strptime(person_info[6], '%H:%M').time() 
+    time_end_person = time_end_person.strftime('%H:%M')
     if time_start_person >= time_end_person:
         bot.send_message(message.from_user.id, INCORRECT__TIME_TEXT, reply_markup=markup)
         return
 
-    time_start = (dt.datetime.combine(td, time_start_person) + time_zone).strftime("%H:%M")
-    time_end = (dt.datetime.combine(td, time_end_person) + time_zone).time().strftime("%H:%M")
+    # time_start = (dt.datetime.combine(dt.date.today(), time_start_person) + time_zone).strftime("%H:%M")
+    # time_end = (dt.datetime.combine(dt.date.today(), time_end_person) + time_zone).time().strftime("%H:%M")
 
     user_active = data_base.loock_user_into_chats(message.from_user.id)
     if user_active:
         bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
         return
     bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
-    data_base.change_active_status(message.from_user.id, "True")
-    users = data_base.get_match(time_start, time_end)
-    if len(users) > 1:
-        active_users = data_base.get_active_users(time_start, time_end)
 
-        chat_id, name_room = data_base.get_free_room_id(time_start, time_end)
-        if chat_id == 0:
+    data_base.change_active_status(message.from_user.id, "True")
+    print(f"Start searching: {time_start_person}, {time_end_person}")
+    users = data_base.get_match(time_start_person, time_end_person)
+    print(users)
+
+    if len(users) > 1:
+        active_users = data_base.get_active_users(time_start_person, time_end_person)
+        chat_id, name_room = data_base.get_free_room_id(time_start_person, time_end_person)
+        if chat_id == None:
             bot.send_message(message.from_user.id, "No free rooms")
             return
         link = bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
         for user in active_users:
-            bot.send_message(user[0], f"{LINK_INVITE_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
-            bot.send_message(user[0], link.invite_link)
+            try:
+                bot.send_message(user[0], f"{LINK_INVITE_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
+                bot.send_message(user[0], link.invite_link)
+            except:
+                print (f"Error send message to {user[0]}")
     else:
         bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
 
@@ -312,16 +322,15 @@ def dell_all():
         data_base.dell_all_ReadyUsers()
         data_base.dell_all_Active_Chat()
         data_base.dell_all_Messages()
-        bot.kick_chat_member
 
-def dell_all_message_from_one_chat(message):
-    messages = data_base.get_messages_from_chat(message.chat.id)
+def dell_all_message_from_one_chat(info):
+    messages = data_base.get_messages_from_chat(info.chat.id)
     for message in messages:
         try:
-            bot.delete_message(message.chat.id, message[0])
+            bot.delete_message(info.chat.id, message[0])
         except:
             pass
-    data_base.delete_chat_messages_from_user(message.chat.id)
+    data_base.delete_chat_messages_from_user(info.chat.id)
 
 
 @bot.message_handler(content_types='text')
@@ -332,7 +341,7 @@ def text_holder(message):
     elif message.text == "Version":
         bot.send_message(ADMIN_IP_MISHA, "Version 4.3")
         return
-    elif message.text == "Dell all message" and message.from_user.id != ADMIN_IP_MISHA:
+    elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
         return
 
@@ -344,7 +353,7 @@ def text_holder(message):
         return
     markup.add(types.KeyboardButton("Menu")) 
     if match:
-        set_time_zone_func(message, match, markup)
+        set_time_zone_func(message, match)
     elif message.text == "Menu":
         menu(message, CHOOSE_MOUTION_TEXT)
     elif message.text == "Set time zone":

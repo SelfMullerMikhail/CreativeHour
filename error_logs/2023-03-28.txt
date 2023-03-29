@@ -109,3 +109,6 @@
 16:03:24 Dangerous_Error: 'NoneType' object is not iterable
 16:04:20 Dangerous_Error: 'NoneType' object is not iterable
 16:04:41 Dangerous_Error: 'NoneType' object is not iterable
+21:32:48 Dangerous_Error: name 'INFO_TEXT' is not defined
+21:32:55 Dangerous_Error: name 'INFO_TEXT' is not defined
+21:35:16 Dangerous_Error: name 'INFO_TEXT' is not defined

@@ -198,7 +198,7 @@ class BdHelper():
 
         self.__close_cursor_and_conn(cursor, conn)
         if info == []:
-            info = [[0, 'No free rooms']]
+            info = [[None, 'No free rooms']]
         return info[0][0], info[0][1]
 
     @decore_bd_function
@@ -340,10 +340,10 @@ if __name__ == "__main__":
         # print(a.get_match('09:00', '11:00'), "True")
         # print(a.get_match('10:00', '12:00'), "True")
         # print(a.get_match('09:00', '12:00'), "True")
-        # print(a.get_match('11:00', '12:00'), "False")
-        # print(a.get_match('09:00', '10:00'), "False")
-        # print(a.get_match('12:00', '13:00'), "False")
+        print(a.get_match('17:00:00', '18:00:00'), "True")
+        print(a.get_match('18:00', '19:00'), "False")
+        print(a.get_match('16:00', '17:00'), "False")
         # print(a.get_free_room_id('11:00', '12:00'), "True")
         # print(a.get_free_room_id('10:00', '14:00'))
-        print(a.get_ReadyUser_from_time('12:30', '10'))
+        # print(a.get_ReadyUser_from_time('12:30', '10'))
         

@@ -27,7 +27,5 @@
 -- UPDATE ReadyUsers SET user_time_start = '09:00' WHERE id = 11;
 -- UPDATE ReadyUsers SET user_time_end = '11:00' WHERE id = 11;
 
-DELETE FROM Active_Chat WHERE id = 1;
-
-DELETE FROM ReadyUsers WHERE id = 5;
-DELETE FROM ReadyUsers WHERE id = 11;
+DELETE FROM Chats ;
+insert into Chats (name, id_chat, max_users) values ('AsyaBotChat_1', '-402816936', 3);
