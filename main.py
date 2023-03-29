@@ -339,7 +339,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(ADMIN_IP_MISHA, "Version 4.3")
+        bot.send_message(message.chat.id, "Version 4.5")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
