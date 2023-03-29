@@ -131,10 +131,9 @@ def menu(message, text):
     try:
         if data_base.get_one_user(message.from_user.id) is None:
             have_not_account(message)
-            print(f"menu {message.from_user.id}")
             return
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        markup.add(types.KeyboardButton("Info"))
+        item1 = types.KeyboardButton("Info")
         item1 = types.KeyboardButton("Set time zone")
         item2 = types.KeyboardButton("Set active time")
         item3 = types.KeyboardButton("Delete account")
@@ -242,9 +241,6 @@ def start_search(message):
         bot.send_message(message.from_user.id, INCORRECT__TIME_TEXT, reply_markup=markup)
         return
 
-    # time_start = (dt.datetime.combine(dt.date.today(), time_start_person) + time_zone).strftime("%H:%M")
-    # time_end = (dt.datetime.combine(dt.date.today(), time_end_person) + time_zone).time().strftime("%H:%M")
-
     user_active = data_base.loock_user_into_chats(message.from_user.id)
     if user_active:
         bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
@@ -339,7 +335,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 4.5")
+        bot.send_message(message.chat.id, "Version 4.6")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -363,10 +359,6 @@ def text_holder(message):
     elif message.text == "Delete account":
         delete_account(message)
     elif message.text == "Info":
-        if data_base.get_one_user(message.from_user.id) is None:
-            have_not_account(message)
-            print(f"menu {message.from_user.id}")
-            return
         menu(message, INFO_TEXT)
     elif message.text == "Sure delete me":
         sure(message)
