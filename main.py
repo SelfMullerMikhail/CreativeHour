@@ -18,7 +18,6 @@ data_base = BdHelper()
 def join_request(update: types.ChatJoinRequest):
     user_id = update.from_user.id
     chat_id = update.chat.id
-    bot.send_message(user_id, APPROVE_TO_JOIN_TEXT)
     info = data_base.get_user_info_from_id(user_id)
     data_base.change_active_status(user_id, "False")
     data_base.add_user_to_Active_Chat(user_id, chat_id)
@@ -43,9 +42,8 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     count = bot.get_chat_member_count(chat_id) 
     count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
-    print(f"User: {user_id} leave chat: {chat_id}")
     
-    if count == 1:
+    if count <= 1:
         data_base.set_chats_time(chat_id, "NULL", "NULL")
         messages = data_base.get_messages_from_chat(chat_id)
         for i in messages:
@@ -252,7 +250,7 @@ def start_search(message):
         link = bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
         for user in active_users:
             try:
-                bot.send_message(user[0], f"{LINK_INVITE_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
+                bot.send_message(user[0], f"{APPROVE_TO_JOIN_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
                 bot.send_message(user[0], link.invite_link)
             except:
                 print (f"Error send message to {user[0]}")
@@ -346,11 +344,12 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.3")
+        bot.send_message(message.chat.id, "Version 5.4")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
         return
+    
 
     data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -358,7 +357,6 @@ def text_holder(message):
     if message.text not in ["Info", "Create account"] and data_base.get_one_user(message.from_user.id) is None:
         markup = have_not_account()
         bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
-        return
     elif match:
         set_time_zone_func(message, match)
     elif message.text == "Menu":
