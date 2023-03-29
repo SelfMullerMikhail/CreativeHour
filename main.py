@@ -327,7 +327,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.1")
+        bot.send_message(message.chat.id, "Version 5.2")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -340,8 +340,7 @@ def text_holder(message):
         markup = have_not_account()
         bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
         return
-    markup.add(types.KeyboardButton("Menu")) 
-    if match:
+    elif match:
         set_time_zone_func(message, match)
     elif message.text == "Menu":
         markup = menu(message)
