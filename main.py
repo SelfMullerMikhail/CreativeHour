@@ -264,10 +264,16 @@ def check_persons(message, markup):
         info = data_base.get_info_all_users_in_chats()
         html = ""
         for i in info:
-            user = f"""name: {i[1]}  id: {i[0]}   time_zone: {i[2]} id_chat:{i[3]}   name_chat: {i[4]} 
-s_time: {i[5]}   e_time {i[6]} \n"""
-            html = str(html) + str(user)
-        bot.send_message(message.from_user.id, html, reply_markup=markup)
+            try:
+                user = f"""name: {i[1]}  id: {i[0]}   time_zone: {i[2]} id_chat:{i[3]}   name_chat: {i[4]} 
+    s_time: {i[5]}   e_time {i[6]} \n"""
+                html = str(html) + str(user)
+            except:
+                pass
+        try:
+            bot.send_message(message.from_user.id, html, reply_markup=markup)
+        except:
+            pass
     except:
         pass
 
@@ -304,12 +310,25 @@ def dell_all():
                     pass
                 try:
                     bot.kick_chat_member(chat[0], user[0])
+                except:
+                    pass
+                try:
                     bot.unban_chat_member(chat[0], user[0])
                 except:
                     pass
         data_base.dell_all_ReadyUsers()
         data_base.dell_all_Active_Chat()
         data_base.dell_all_Messages()
+
+def unbun_all():
+    users = data_base.get_all_users()
+    chats = data_base.get_all_chats()
+    for chat in chats:
+        for user in users:
+            try:
+                bot.unban_chat_member(chat[0], user[0])
+            except:
+                pass
 
 def dell_all_message_from_one_chat(info):
     messages = data_base.get_messages_from_chat(info.chat.id)
@@ -327,7 +346,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.2")
+        bot.send_message(message.chat.id, "Version 5.3")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -364,6 +383,8 @@ def text_holder(message):
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
             return
+    elif message.text == "unbun all":
+        unbun_all()
         
 
 
