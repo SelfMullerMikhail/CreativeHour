@@ -127,21 +127,22 @@ def set_time_zone(message):
     except Exception("Set_time_zone Wrong") as e:
         bot.send_message(message.from_user.id, e)
 
-def menu(message, text):
+def menu(message, text=""):
     try:
         if data_base.get_one_user(message.from_user.id) is None:
-            have_not_account(message)
+            have_not_account(message, text)
             return
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         item1 = types.KeyboardButton("Info")
-        item1 = types.KeyboardButton("Set time zone")
-        item2 = types.KeyboardButton("Set active time")
-        item3 = types.KeyboardButton("Delete account")
-        item4 = types.KeyboardButton("Stop searching")
-        markup.add(item1, item2, item3, item4)
+        item2 = types.KeyboardButton("Set time zone")
+        item3 = types.KeyboardButton("Set active time")
+        item4 = types.KeyboardButton("Delete account")
+        item5 = types.KeyboardButton("Stop searching")
+        markup.add(item1, item2, item3, item4, item5)
+        bot.send_message(message.from_user.id, "-", reply_markup=markup)
     except :
         bot.send_message(message.from_user.id, "menu Wrong")
-    bot.send_message(message.from_user.id, text, reply_markup=markup)
+    
 
 
 def delete_account(message):
@@ -295,11 +296,11 @@ def handle_callback_query(call):
     else:
         have_not_account(call)
 
-def have_not_account(message, TEXT):
+def have_not_account(message, text):
     markap = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markap.add(types.KeyboardButton("Info"))
     markap.add(types.KeyboardButton("Create account"))
-    bot.send_message(message.from_user.id, TEXT, reply_markup=markap)
+    bot.send_message(message.from_user.id, text, reply_markup=markap)
 
 def dell_all():
         users = data_base.get_all_users()
@@ -335,7 +336,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 4.7")
+        bot.send_message(message.chat.id, "Version 4.8")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -345,7 +346,7 @@ def text_holder(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     match = re.search(r'Set time zone ([-+]\d) UTC', message.text)     
     if message.text not in ["Info", "Create account"] and data_base.get_one_user(message.from_user.id) is None:
-        have_not_account(message, HAVE_NO_ACCOUNT_TEXT)
+        have_not_account(message)
         return
     markup.add(types.KeyboardButton("Menu")) 
     if match:
