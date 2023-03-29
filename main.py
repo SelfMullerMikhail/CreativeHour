@@ -336,7 +336,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 4.8")
+        bot.send_message(message.chat.id, "Version 4.9")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
@@ -346,7 +346,7 @@ def text_holder(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     match = re.search(r'Set time zone ([-+]\d) UTC', message.text)     
     if message.text not in ["Info", "Create account"] and data_base.get_one_user(message.from_user.id) is None:
-        have_not_account(message)
+        have_not_account(message, HAVE_NO_ACCOUNT_TEXT)
         return
     markup.add(types.KeyboardButton("Menu")) 
     if match:
