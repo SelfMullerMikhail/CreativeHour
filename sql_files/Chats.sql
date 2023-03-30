@@ -1,13 +1,13 @@
-DROP TABLE IF EXISTS Chats;
-CREATE TABLE Chats (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_chat INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    max_users INTEGER NOT NULL,
-    users_now INTEGER NOT NULL DEFAULT 0,
-    min_start_time DATETIME DEFAULT 'None',
-    max_end_time DATETIME DEFAULT 'None'
-);
+-- DROP TABLE IF EXISTS Chats;
+-- CREATE TABLE Chats (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     id_chat INTEGER NOT NULL,
+--     name TEXT NOT NULL,
+--     max_users INTEGER NOT NULL,
+--     users_now INTEGER NOT NULL DEFAULT 0,
+--     min_start_time DATETIME DEFAULT 'None',
+--     max_end_time DATETIME DEFAULT 'None'
+-- );
 
 
 -- INSERT INTO Chats (id_chat, name, max_users, min_start_time, max_end_time) 
@@ -17,3 +17,7 @@ CREATE TABLE Chats (
 -- FROM Chats
 -- WHERE max_users >= users_now 
 -- AND (min_start_time <= '10:00' AND max_start_time <= '12:00');
+
+UPDATE Chats set max_users = 6 WHERE id = 1;
+UPDATE Chats set max_users = 6 WHERE id = 2;
+UPDATE Chats set max_users = 6 WHERE id = 3;

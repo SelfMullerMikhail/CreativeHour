@@ -207,23 +207,38 @@ def set_active_time_panel(call):
     markup.add(types.InlineKeyboardButton("Start", callback_data="startsearching"))
     bot.send_message(call.chat.id, INSTRUCTION_FOR_SET_ACTIVE_TIME, reply_markup=markup)
 
+def get_UTC_time(user_id, time_str):
+    user_UTC_time = int(data_base.get_user_info_from_id(user_id)[3])
+    time_obj = dt.datetime.strptime(time_str, '%H:%M').time()
+    time_delta = dt.timedelta(hours=abs(user_UTC_time))
+    if user_UTC_time <= 0:
+        new_time_obj = (dt.datetime.combine(dt.date.today(), time_obj) + time_delta).time()
+    else:
+        new_time_obj = (dt.datetime.combine(dt.date.today(), time_obj) - time_delta).time()
+    formatted_time_str = new_time_obj.strftime('%H:%M')
+    return formatted_time_str
+
 
 def start_time(call, time):
     markup = menu(call)
+    new_time_obj = get_UTC_time(call.from_user.id ,time)
     bot.send_message(call.from_user.id, f"Your start time: {time}", reply_markup=markup)
-    data_base.set_active_time_start(call.from_user.id, time)
+    data_base.set_active_time_start(call.from_user.id, new_time_obj)
 
 def end_time(call, time):
     markup = menu(call)
+    new_time_obj = get_UTC_time(call.from_user.id ,time)
     bot.send_message(call.from_user.id, f"Your end time: {time}", reply_markup=markup)
-    data_base.set_active_time_end(call.from_user.id, time)
+    data_base.set_active_time_end(call.from_user.id, new_time_obj)
 
 def start_search(message):
+    bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} start searching")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton("Menu"))
     data_base.change_active_status(message.from_user.id, "True")
     person_info = data_base.get_user_info_from_id(message.from_user.id)
     if person_info[5] == None or person_info[6] == None:
+        bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} set time None")
         bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT, reply_markup=markup)
         return
     time_start_person = dt.datetime.strptime(person_info[5], '%H:%M').time()
@@ -235,12 +250,12 @@ def start_search(message):
         return
     user_active = data_base.loock_user_into_chats(message.from_user.id)
     if user_active:
+        bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} already in group")
         bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
         return
     bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
     data_base.change_active_status(message.from_user.id, "True")
     users = data_base.get_match(time_start_person, time_end_person)
-
     if len(users) > 1:
         active_users = data_base.get_active_users(time_start_person, time_end_person)
         chat_id, name_room = data_base.get_free_room_id(time_start_person, time_end_person)
@@ -250,11 +265,13 @@ def start_search(message):
         link = bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
         for user in active_users:
             try:
+                bot.send_message(ADMIN_IP_MISHA, f"Send link to {user[2]}")
                 bot.send_message(user[0], f"{APPROVE_TO_JOIN_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
                 bot.send_message(user[0], link.invite_link)
             except:
-                print (f"Error send message to {user[0]}")
+                bot.send_message(ADMIN_IP_MISHA, f"Error send message to {user[0]}")
     else:
+        bot.send_message(ADMIN_IP_MISHA, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
         bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
 
 def check_persons(message, markup):
@@ -318,16 +335,6 @@ def dell_all():
         data_base.dell_all_Active_Chat()
         data_base.dell_all_Messages()
 
-def unbun_all():
-    users = data_base.get_all_users()
-    chats = data_base.get_all_chats()
-    for chat in chats:
-        for user in users:
-            try:
-                bot.unban_chat_member(chat[0], user[0])
-            except:
-                pass
-
 def dell_all_message_from_one_chat(info):
     messages = data_base.get_messages_from_chat(info.chat.id)
     for message in messages:
@@ -337,28 +344,29 @@ def dell_all_message_from_one_chat(info):
             pass
     data_base.delete_chat_messages_from_user(info.chat.id)
 
+def get_match(message):
+    return re.search(r'Set time zone ([-+]\d) UTC', message.text)   
+
 
 @bot.message_handler(content_types='text')
 def text_holder(message):
+    data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.4")
+        bot.send_message(message.chat.id, "Version 5.5")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
         return
-    
+    # markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-    data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    match = re.search(r'Set time zone ([-+]\d) UTC', message.text)     
     if message.text not in ["Info", "Create account"] and data_base.get_one_user(message.from_user.id) is None:
         markup = have_not_account()
         bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
-    elif match:
-        set_time_zone_func(message, match)
+    elif get_match(message):
+        set_time_zone_func(message, get_match(message))
     elif message.text == "Menu":
         markup = menu(message)
         bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT, reply_markup=markup)
@@ -381,8 +389,6 @@ def text_holder(message):
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
             return
-    elif message.text == "unbun all":
-        unbun_all()
         
 
 
@@ -398,4 +404,3 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"Dangerous_Error: {e}")
             bot.send_message(ADMIN_IP_MISHA, f"Dangerous_Error: {e}")
-            write_logs(f"Dangerous_Error: {e}", folder="error_logs")
