@@ -16,10 +16,14 @@ class TimeCheker():
                         now = time.localtime()
                         time_now = f"{now.tm_hour}:{now.tm_min}"
                         users = self.database.get_ReadyUser_from_time(time_now, TIME_FIRE)
+                        self.bot_send_message(ADMIN_IP_MISHA, f"Time_cheker: {time_now}")
                         for user in users:
                             self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: {user[0]}, {user[1]}")
                             if int(user[0]) != int(ADMIN_IP_MISHA):
-                                self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: kick: {user[1]}")
+                                try:
+                                    self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: kick: {user[1]}")
+                                except:
+                                    ...
                                 try:
                                     self.bot.kick_chat_member(user[3], user[0])
                                     self.bot.unban_chat_member(chat_id= user[3], user_id=user[0])  

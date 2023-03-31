@@ -192,7 +192,7 @@ def set_time_zone_func(message, match):
     data_base.set_time_zone(message.from_user.id, time_zone)
     markup = menu(message)
     bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ", reply_markup=markup)
-
+    bot.send_message(ADMIN_IP_MISHA, f"User {message.from_user.id} set time zone {time_zone}")
 
 def set_active_time_panel(call):
     markup = types.InlineKeyboardMarkup()
@@ -224,12 +224,14 @@ def start_time(call, time):
     new_time_obj = get_UTC_time(call.from_user.id ,time)
     bot.send_message(call.from_user.id, f"Your start time: {time}", reply_markup=markup)
     data_base.set_active_time_start(call.from_user.id, new_time_obj)
+    bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.id} set start time {time} UTC")
 
 def end_time(call, time):
     markup = menu(call)
     new_time_obj = get_UTC_time(call.from_user.id ,time)
     bot.send_message(call.from_user.id, f"Your end time: {time}", reply_markup=markup)
     data_base.set_active_time_end(call.from_user.id, new_time_obj)
+    bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.id} set start time {time} UTC")
 
 def start_search(message):
     bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} start searching")
@@ -355,7 +357,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.5")
+        bot.send_message(message.chat.id, "Version 5.6")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
