@@ -45,15 +45,15 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
     
-    if count <= 1:
-        data_base.set_chats_time(chat_id, "NULL", "NULL")
-        messages = data_base.get_messages_from_chat(chat_id)
-        for i in messages:
-            try:
-                bot.delete_message(i[0], i[1])
-            except:
-                bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
-        data_base.delete_chat_messages_from_user(user_id)
+    # if count <= 1:
+    #     data_base.set_chats_time(chat_id, "NULL", "NULL")
+    #     messages = data_base.get_messages_from_chat(chat_id)
+    #     for i in messages:
+    #         try: 
+    #             bot.delete_message(i[0], i[1])
+    #         except:
+    #             bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
+    #     data_base.delete_chat_messages_from_user(user_id)
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
@@ -359,7 +359,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.7")
+        bot.send_message(message.chat.id, "Version 5.8")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
