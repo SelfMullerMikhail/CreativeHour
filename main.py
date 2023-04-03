@@ -354,7 +354,7 @@ def get_match(message):
 
 @bot.message_handler(content_types='text')
 def text_holder(message):
-    data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
+    # data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all()
         return
