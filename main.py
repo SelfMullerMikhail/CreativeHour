@@ -40,20 +40,21 @@ def left_chat_member(message=None, user_id_=None, chat_id_=None):
     data_base.change_active_status(user_id, "False")
     time_min, time_max = data_base.get_time_from_chat(chat_id)
     data_base.upgrade_room_info_delete(chat_id, time_min, time_max)
-    bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
+    if time.localtime().tm_min != 0:
+        bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
     count = bot.get_chat_member_count(chat_id) 
     count = count - 1
     data_base.update_rooms_users_count(chat_id, count)
     
-    # if count <= 1:
-    #     data_base.set_chats_time(chat_id, "NULL", "NULL")
-    #     messages = data_base.get_messages_from_chat(chat_id)
-    #     for i in messages:
-    #         try: 
-    #             bot.delete_message(i[0], i[1])
-    #         except:
-    #             bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
-    #     data_base.delete_chat_messages_from_user(user_id)
+    if count <= 1:
+        data_base.set_chats_time(chat_id, "NULL", "NULL")
+        messages = data_base.get_messages_from_chat(chat_id)
+        for i in messages:
+            try: 
+                bot.delete_message(i[0], i[1])
+            except:
+                bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
+        data_base.delete_chat_messages_from_user(user_id)
 
 # If create new chat
 @bot.message_handler(commands=['add_chat_into_active'])
@@ -354,7 +355,7 @@ def get_match(message):
 
 @bot.message_handler(content_types='text')
 def text_holder(message):
-    # data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
+    data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
     if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all()
         return
