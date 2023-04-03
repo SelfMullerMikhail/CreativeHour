@@ -21,7 +21,9 @@ def join_request(update: types.ChatJoinRequest):
     info = data_base.get_user_info_from_id(user_id)
     data_base.change_active_status(user_id, "False")
     data_base.add_user_to_Active_Chat(user_id, chat_id)
+
     data_base.upgrade_room_info_append(user_id, info[5], info[6])
+
     count = bot.get_chat_member_count(chat_id) - 1
     data_base.update_rooms_users_count(chat_id, count)
     bot.send_message(user_id, JOIN_GROUP_TEXT)
@@ -360,7 +362,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.8")
+        bot.send_message(message.chat.id, "Version 6.0")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)
