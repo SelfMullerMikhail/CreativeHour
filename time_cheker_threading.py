@@ -2,11 +2,10 @@ import time
 from CONSTAINS import TIME_FIRE, ADMIN_IP_MISHA, PUSHING_TIME, MORNING_MESSAGE
 
 class TimeCheker():
-    def __init__(self, database, write_logs, bot, left_chat_member) -> None:
+    def __init__(self, database, write_logs, bot) -> None:
         self.database = database
         self.write_logs = write_logs
         self.bot = bot
-        self.left_chat_member = left_chat_member
 
     def time_cheker(self):
             while True:
@@ -31,7 +30,6 @@ class TimeCheker():
                                         self.bot.send_message(ADMIN_IP_MISHA, f"{user[1]} was kick")
                                     except Exception as e:
                                         self.bot.send_message(ADMIN_IP_MISHA, f"Error, kick person: {e}")
-                                    # self.left_chat_member(user_id_=user[0], chat_id_=user[3])
                         except:
                             self.bot.send_message(ADMIN_IP_MISHA, f"Wrong time_cheker{user[1]}. Eror: 1")
                         try:

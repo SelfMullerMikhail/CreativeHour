@@ -1,5 +1,4 @@
 import sqlite3
-import datetime as dt
 from loger import write_logs
 
 def decore_bd_function(func):
@@ -13,12 +12,30 @@ def decore_bd_function(func):
     return wrapper
 
 class BdHelper():
-    def __init__(self):
-        ...
+    def __init__(self, database):
+        self.database = database
+
+    @decore_bd_function
+    def user_push_start(self, user_id, user_name):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO user_activity_start(user_id, user_name) VALUES({user_id}, '{user_name}')""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def user_came(self, user_id, user_name, chat_id):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT INTO user_came(user_id, user_name, chat_id) VALUES({user_id}, '{user_name}', {chat_id})""")
+        self.__close_cursor_and_conn(cursor, conn)
+
+    @decore_bd_function
+    def insert_new_user(self, user_id, user_name):
+        cursor, conn =  self.__get_cursor()
+        cursor.execute(f"""INSERT OR IGNORE INTO users(user_id, user_name) VALUES({user_id}, '{user_name}');""")
+        self.__close_cursor_and_conn(cursor, conn)
 
     @decore_bd_function
     def __get_cursor(self):
-        conn = sqlite3.connect('AsyaApp.db')
+        conn = sqlite3.connect(self.database)
         cursor = conn.cursor()
         return cursor, conn
 
@@ -40,6 +57,7 @@ class BdHelper():
                                 FROM ReadyUsers 
                                 WHERE user_id = {id_user}""").fetchall()
         self.__close_cursor_and_conn(cursor, conn)
+        print(info)
         return info[0]
             
 
@@ -182,7 +200,7 @@ class BdHelper():
     @decore_bd_function
     def get_free_room_id(self, min_time, max_time):
         cursor, conn =  self.__get_cursor()
-        info = cursor.execute(f"""SELECT id_chat, name
+        info = cursor.execute(f"""SELECT id_chat, name, min_start_time, max_end_time
         FROM Chats
         WHERE (max_users >= users_now AND(
             ('{min_time}' <=  min_start_time AND '{max_time}' > min_start_time) OR
@@ -191,26 +209,16 @@ class BdHelper():
             ('{min_time}'>= min_start_time AND '{max_time}' <= max_end_time)))
             ORDER BY users_now DESC""").fetchall()
         if info == []:
-            info = cursor.execute(f"""SELECT id_chat, name
+            info = cursor.execute(f"""SELECT id_chat, name, min_start_time, max_end_time
         FROM Chats
         WHERE max_users >= users_now AND min_start_time = 'None' AND max_end_time = 'None'
         ORDER BY users_now DESC""").fetchall()
 
         self.__close_cursor_and_conn(cursor, conn)
         if info == []:
-            info = [[None, 'No free rooms']]
-        return info[0][0], info[0][1]
+            info = [[None, 'No free rooms', "False", "False"]]
+        return info[0][0], info[0][1], info[0][2], info[0][3]
 
-    @decore_bd_function
-    def upgrade_room_info_append(self, id_chat, min_start_time, max_end_time):
-        min_time, max_time = self.get_rooms_times(id_chat)
-
-        if dt.time().strftime(min_start_time) < dt.time().strftime(min_time):
-            self.update_room_info_time(id_chat, min_start_time, 'min_start_time')
-
-        if dt.time().strftime(max_end_time) > dt.time().strftime(max_time):
-            self.update_room_info_time(id_chat, max_end_time, 'max_end_time')
-        return None
         
     @decore_bd_function
     def upgrade_room_info_delete(self, id_chat, min_start_time, max_end_time):
@@ -249,7 +257,16 @@ class BdHelper():
         cursor.execute(f"""UPDATE Chats SET users_now = {count} WHERE id_chat = '{id_chat}';""")
         self.__close_cursor_and_conn(cursor, conn)
         return None
-        
+    
+    @decore_bd_function
+    def get_time_active_chat_users(self, id_chat):
+        cursor, conn =  self.__get_cursor()
+        info = cursor.execute(f"""SELECT min(user_time_start), max(user_time_end)
+        FROM view_active_chats_info
+        WHERE id_chat = '{id_chat}';""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return info[0][0], info[0][1]
+
     @decore_bd_function
     def get_rooms_times(self, id_chat):
         cursor, conn =  self.__get_cursor()
@@ -257,7 +274,7 @@ class BdHelper():
         FROM Chats
         WHERE id_chat = '{id_chat}';""").fetchall()
         self.__close_cursor_and_conn(cursor, conn)
-        return ("09:00", "11:00")
+        return info[0][0], info[0][1]
 
     @decore_bd_function
     def update_room_info_time(self, id_chat, time, boarder):
@@ -347,10 +364,11 @@ if __name__ == "__main__":
         # print(a.get_match('09:00', '11:00'), "True")
         # print(a.get_match('10:00', '12:00'), "True")
         # print(a.get_match('09:00', '12:00'), "True")
-        print(a.get_match('17:00:00', '18:00:00'), "True")
-        print(a.get_match('18:00', '19:00'), "False")
-        print(a.get_match('16:00', '17:00'), "False")
+        # print(a.get_match('17:00:00', '18:00:00'), "True")
+        # print(a.get_match('18:00', '19:00'), "False")
+        # print(a.get_match('16:00', '17:00'), "False")
         # print(a.get_free_room_id('11:00', '12:00'), "True")
         # print(a.get_free_room_id('10:00', '14:00'))
         # print(a.get_ReadyUser_from_time('12:30', '10'))
-        
+        info = a.get_free_room_id(0, 0)
+        print(info[3] == "None")
