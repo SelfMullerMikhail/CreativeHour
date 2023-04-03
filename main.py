@@ -393,6 +393,12 @@ def text_holder(message):
         if int(message.from_user.id) in TOTAL_ADMINS:
             check_persons(message, markup)
             return
+    elif message.text == "GET GROUPS":
+        groups = data_base.get_all_groups()
+        for i in groups:
+            link = bot.create_chat_invite_link(chat_id=i[1], name=i[2])
+            bot.send_message(message.from_user.id, link)
+
         
 
 

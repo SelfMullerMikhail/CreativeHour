@@ -4,7 +4,7 @@
 API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
 
 TIME_FIRE = 5
-PUSHING_TIME = 16
+PUSHING_TIME = 17
 
 ADMIN_IP_MISHA = 402816936
 ADMIN_IP_ASYA = 243980106
@@ -37,15 +37,15 @@ JOIN_GROUP_TEXT = """Hey! I’ve found your creative co-workers for today 😎 D
 
 FIRST_MESSAGE_GROUP = """Hey, creatives!
 
-Meet your co-workers for today. Our simple steps:
+1. Meet your co-workers for today. Our simple steps:
 
-Write a short message or send a 15-second audio message about what you’re going to do in your creative hour. You can also video chat, if you feel like it.
+2. Write a short message or send a 15-second audio message about what you’re going to do in your creative hour. You can also video chat, if you feel like it.
 
-Start your creative hour!
+3. Start your creative hour!
 
-Come back in an hour to share your results (or sometimes lack thereof!) and cheer your co-workers on (either way!).
+4. Come back in an hour to share your results (or sometimes lack thereof!) and cheer your co-workers on (either way!).
 
-Do another creative hour if you’re up for it.
+5. Do another creative hour if you’re up for it.
 """
 INSTRUCTION_FOR_SET_ACTIVE_TIME = """""
 Choose your start time on the left.
