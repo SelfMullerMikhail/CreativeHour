@@ -24,6 +24,8 @@ def join_request(update: types.ChatJoinRequest):
     data_base.upgrade_room_info_append(user_id, info[5], info[6])
     count = bot.get_chat_member_count(chat_id) - 1
     data_base.update_rooms_users_count(chat_id, count)
+    bot.send_message(user_id, JOIN_GROUP_TEXT)
+    bot.send_message(ADMIN_IP_MISHA, f"New user: {user_id}")
 
 # If users leave chat
 @bot.message_handler(content_types=['left_chat_member'])
@@ -268,8 +270,8 @@ def start_search(message):
         for user in active_users:
             try:
                 bot.send_message(ADMIN_IP_MISHA, f"Send link to {user[2]}")
-                bot.send_message(user[0], f"{APPROVE_TO_JOIN_TEXT}  {user[2]}-{user[3]}", reply_markup=markup)
-                bot.send_message(user[0], link.invite_link)
+                # bot.send_message(user[0], f"{APPROVE_TO_JOIN_TEXT}  {user[2]}-{user[3]}", )
+                bot.send_message(user[0], link.invite_link, reply_markup=markup)
             except:
                 bot.send_message(ADMIN_IP_MISHA, f"Error send message to {user[0]}")
     else:
@@ -357,7 +359,7 @@ def text_holder(message):
         dell_all()
         return
     elif message.text == "Version":
-        bot.send_message(message.chat.id, "Version 5.6")
+        bot.send_message(message.chat.id, "Version 5.7")
         return
     elif message.text == "Dell all message" and message.from_user.id == ADMIN_IP_MISHA:
         dell_all_message_from_one_chat(message)

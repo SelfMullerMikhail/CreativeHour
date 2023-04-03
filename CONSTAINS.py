@@ -4,10 +4,13 @@
 API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
 
 TIME_FIRE = 5
+PUSHING_TIME = 16
+
 ADMIN_IP_MISHA = 402816936
 ADMIN_IP_ASYA = 243980106
 TOTAL_ADMINS = [ADMIN_IP_MISHA, ADMIN_IP_ASYA]  
 
+MORNING_MESSAGE = """Hey! Come pick your creative hour and I’ll find your perfect co-workers for today 😎"""
 DELETE_ACCOUNT_TEXT = "Are you sure?"
 DELETED_ACCOUNT_TEXT = "Your account has been deleted."
 START_ACTIVE_TIME_TEXT = "We will soon find your creative group."
@@ -28,7 +31,9 @@ CHOOSE_MOUTION_TEXT = "Select what you want to do."
 STOP_SEARCHING_TEXT = "You have ended your search."
 SET_ACTIVE_TIME_TEXT = "Choose your creative hour."
 LINK_INVITE_TEXT = "Here is your link."
-INFO_TEXT = "This bot will help you to find a creative group"
+INFO_TEXT = "I’ll help you find an hour to be creative in good company!"
+JOIN_GROUP_TEXT = """Hey! I’ve found your creative co-workers for today 😎 Don’t forget to check out the pinned message  🤓"""
+
 
 FIRST_MESSAGE_GROUP = """Hey, creatives!
 
