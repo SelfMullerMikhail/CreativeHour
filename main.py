@@ -356,8 +356,6 @@ def text_holder(message):
     elif get_match(message):
         set_time_zone_func(message, get_match(message))
     elif message.text == "Menu":
-        messages = bot.get_message(message.chat.id, message_id=None)
-        print(messages)
         markup = menu(message)
         bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT, reply_markup=markup)
     elif message.text == "Set time zone":
