@@ -1,9 +1,11 @@
 import time
+from loger import write_logs
+from bd_function import BdHelper
 from CONSTAINS import TIME_FIRE, ADMIN_IP_MISHA, PUSHING_TIME, MORNING_MESSAGE
 
 class TimeCheker():
-    def __init__(self, database, write_logs, bot) -> None:
-        self.database = database
+    def __init__(self, bot) -> None:
+        self.database = BdHelper("AsyaApp.db")
         self.write_logs = write_logs
         self.bot = bot
 

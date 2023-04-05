@@ -138,15 +138,15 @@ class CreativeHour():
             try:
                 user_id = message.from_user.id
                 print(f"sure {user_id}")
-                id_chat = self.data_base.loock_user_into_chats(user_id)[0][1]
+                id_chat = self.data_base.loock_user_into_chats(user_id)
                 self.data_base.delete_user(user_id)
                 if id_chat:
-                    kick_members(id_chat, user_id)
+                    kick_members(id_chat[0][1], user_id)
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
                 item1 = types.KeyboardButton("Create account")
                 markup.add(item1)
                 bot.send_message(user_id, DELETED_ACCOUNT_TEXT, reply_markup=markup)
-            except Exception("Sure Wrong") as e:
+            except Exception as e:
                 bot.send_message(user_id, e)
 
         def stop_searching(message):
@@ -357,11 +357,14 @@ class CreativeHour():
             if self.data_base.get_one_user(call.from_user.id) != None:
                 start_func = call.data.split("_")
                 if start_func[0] == "starttime":
-                    start_time(call, start_func[1])
+                    th_start_time = threading.Thread(target=start_time, args=(call, start_func[1]))
+                    th_start_time.start()
                 elif start_func[0] == 'endtime':
-                    end_time(call, start_func[1])
+                    th_end_time = threading.Thread(target=end_time, args=(call, start_func[1]))
+                    th_end_time.start()
                 elif start_func[0] == "startsearching":
-                    start_search(call)
+                    th_start_search = threading.Thread(target=start_search, args=(call,))
+                    th_start_search.start()
                 elif "_".join(start_func) == "show_time_panel":
                     print("show_time_panel")
                     show_time_panel(call)
@@ -419,7 +422,7 @@ if __name__ == '__main__':
     while True:
         try:
             bot = CreativeHour(API)
-            time_cheker = TimeCheker(database=bot.data_base, bot=bot, write_logs=write_logs)
+            time_cheker = TimeCheker(bot=bot)
             t = threading.Thread(target=time_cheker.time_cheker)
             t.daemon = True 
             t.start()
