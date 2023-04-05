@@ -110,8 +110,12 @@ class CreativeHour():
             markap.add(types.KeyboardButton("Create account"))
             return markap
             
-
-
+        def send_message(self, user_id, text):
+            try:
+                bot.send_message(user_id, text)
+            except:
+                pass
+            
         def delete_account(message):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             try:

@@ -10,33 +10,13 @@ class TimeCheker():
     def time_cheker(self):
             while True:
                 time.sleep(60)
-                if time.localtime().tm_min == 0:
-                    try:    
-                        try: # 1
-                            now = time.localtime()
-                            time_now = f"{now.tm_hour}:{now.tm_min}"
-                            users = self.database.get_ReadyUser_from_time(time_now, TIME_FIRE)
-                            self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: {time_now}")
-                            for user in users:
-                                self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: {user[0]}, {user[1]}")
-                                if int(user[0]) != int(ADMIN_IP_MISHA):
-                                    try:
-                                        self.bot.send_message(ADMIN_IP_MISHA, f"Time_cheker: kick: {user[1]}")
-                                    except:
-                                        ...
-                                    try:
-                                        self.bot.kick_chat_member(user[3], user[0])
-                                        self.bot.unban_chat_member(chat_id= user[3], user_id=user[0])  
-                                        self.bot.send_message(ADMIN_IP_MISHA, f"{user[1]} was kick")
-                                    except Exception as e:
-                                        self.bot.send_message(ADMIN_IP_MISHA, f"Error, kick person: {e}")
-                        except:
-                            self.bot.send_message(ADMIN_IP_MISHA, f"Wrong time_cheker{user[1]}. Eror: 1")
-                        try:
-                            users_wake_up = self.database.get_ReadyUser_from_time(time_now, PUSHING_TIME)
-                            for user in users_wake_up:
-                                self.bot.send_message(user[0], MORNING_MESSAGE)
-                        except:
-                            self.bot.send_message(ADMIN_IP_MISHA, f"Wrong push message{user[1]}")
-                    except Exception as e:
-                        self.bot.send_message(ADMIN_IP_MISHA, f"Dangerous_Error, time_cheker: {e}")
+                if time.localtime().tm_min == 0:  
+                    now = time.localtime()
+                    time_now = f"{now.tm_hour}:{now.tm_min}"
+                    users = self.database.get_ReadyUser_from_time(time_now, TIME_FIRE)
+                    for user in users:
+                        if int(user[0]) != int(ADMIN_IP_MISHA):
+                            self.bot.kick_members(user[3], user[0])
+                    users_wake_up = self.database.get_ReadyUser_from_time(time_now, PUSHING_TIME)
+                    for user in users_wake_up:
+                        self.bot.send_message(user[0], MORNING_MESSAGE)
