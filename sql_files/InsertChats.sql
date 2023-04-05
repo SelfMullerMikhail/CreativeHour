@@ -4,13 +4,13 @@
 -- # Group_3 = "-1001988286731"
 
 INSERT INTO Chats(name, id_chat, max_users) 
-VALUES ('AsyaBotChat_1', '-1001766992539', 3);
+VALUES ('AsyaBotChat_1', '-1001766992539', 5);
 
 INSERT INTO Chats (name, id_chat, max_users)
-VALUES ("AsyaBotChat_2", "-1001941589630", 3);
+VALUES ("AsyaBotChat_2", "-1001941589630", 5);
 
 INSERT INTO Chats (name, id_chat, max_users)
-VALUES ("AsyaBotChat_3", "-1001988286731", 3);
+VALUES ("AsyaBotChat_3", "-1001988286731", 5);
 
 -- UPDATE Chats SET min_start_time = 'None' WHERE id = 1;
 -- UPDATE Chats SET max_end_time = 'None' WHERE id = 1;

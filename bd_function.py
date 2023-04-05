@@ -284,9 +284,10 @@ class BdHelper():
         return None
 
     @decore_bd_function
-    def dell_user_from_Active_Chat(self, id_chat=None, id_user=None):
+    def dell_user_from_Active_Chat(self, id_user=None):
         cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""DELETE FROM Active_Chat WHERE id_chat = '{id_chat}' OR id_user = {id_user}; """)
+        print(id_user, "ffdfsfs")
+        cursor.execute(f"""DELETE FROM Active_Chat WHERE id_user = {id_user}; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
 
@@ -359,7 +360,7 @@ class BdHelper():
 
 
 if __name__ == "__main__":
-        a = BdHelper()
+        a = BdHelper("AsyaApp.db")
         # print(a.get_match('02:00', '20:00'), "True")
         # print(a.get_match('09:00', '11:00'), "True")
         # print(a.get_match('10:00', '12:00'), "True")
@@ -370,5 +371,6 @@ if __name__ == "__main__":
         # print(a.get_free_room_id('11:00', '12:00'), "True")
         # print(a.get_free_room_id('10:00', '14:00'))
         # print(a.get_ReadyUser_from_time('12:30', '10'))
-        info = a.get_free_room_id(0, 0)
-        print(info[3] == "None")
+        # info = a.get_free_room_id(0, 0)
+        # print(info[3] == "None")
+        a.dell_user_from_Active_Chat(402816936)
