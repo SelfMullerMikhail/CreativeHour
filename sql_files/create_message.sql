@@ -1,8 +1,0 @@
--- SQLite
-DROP TABLE IF EXISTS 'Messages';
-CREATE TABLE 'Messages' (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    message_id INTEGER NOT NULL
-);
