@@ -1,19 +1,23 @@
 import sqlite3
-from loger import write_logs
-
-def decore_bd_function(func):
-    def wrapper(*args):
-        try:
-            info = func(*args)
-            return info
-        except Exception as e:
-            print(e)
-            # write_logs(f"\nError: {e} \nfunc name: {func.__name__} \nargs: {args}", folder="error_logs") 
-    return wrapper
+from decoration import decore_bd_function
 
 class BdHelper():
     def __init__(self, database):
         self.database = database
+        
+    # @decore_bd_function    
+    # def s_get_user(self):
+    #     cursor, conn =  self.__get_cursor()
+    #     info = cursor.execute("""SELECT * FROM users""")
+    #     # self.__close_cursor_and_conn(cursor, conn)
+    #     return info
+    
+    # @decore_bd_function
+    # def s_get_user_push_start(self):
+    #     cursor, conn =  self.__get_cursor()
+    #     info = cursor.execute("""SELECT * FROM user_activity_start""")
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return info
 
     @decore_bd_function
     def user_push_start(self, user_id, user_name):
