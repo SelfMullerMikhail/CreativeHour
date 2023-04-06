@@ -48,7 +48,6 @@ class CreativeHour():
             bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
 
         def set_active_time_text(message, markup):
-                bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} set time None")
                 bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT, reply_markup=markup)
 
         def pin_first_message(chat_id):
@@ -223,10 +222,7 @@ class CreativeHour():
             self.data_base.set_active_time_end(call.from_user.id, new_time_obj)
             bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.id} set end time {time} UTC")
 
-
-
         def start_search(message):
-            bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} start searching")
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add(types.KeyboardButton("Menu"))
             person_info = self.data_base.get_user_info_from_id(message.from_user.id)
             self.data_base_statistic.user_push_start(message.from_user.id, message.from_user.username)
@@ -255,11 +251,17 @@ class CreativeHour():
                     pin_first_message(chat_id)
                 link = bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
                 send_links_to_users(active_users, link, markup)
-
             else:
-                bot.send_message(ADMIN_IP_MISHA, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
                 bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
-
+            
+        #Send data base 
+        def get_bd(bd):
+            try:
+                with open(bd, 'rb') as file:
+                    bot.send_document(ADMIN_IP_MISHA, file)
+            except Exception as e:
+                print(e)
+                
 
         @bot.message_handler(content_types=['new_chat_members'])
         def join_request(update: types.ChatJoinRequest):
@@ -384,7 +386,7 @@ class CreativeHour():
                 bot.send_message(message.chat.id, VERSION)
                 return
 
-            if message.text not in ["Info", "Create account"] and self.data_base.get_one_user(message.from_user.id) is None:
+            if message.text not in ["Info", "Create account", "Set time zone"] and self.data_base.get_one_user(message.from_user.id) is None:
                 markup = have_not_account()
                 bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
             elif get_match(message):
@@ -412,6 +414,10 @@ class CreativeHour():
                 for i in groups:
                     link = bot.create_chat_invite_link(chat_id=i[1], name=i[2])
                     bot.send_message(message.from_user.id, link)
+            elif message.text == "GET DB S":
+                get_bd('Statistic.db')
+            elif message.text == "GET DB U": 
+                get_bd('AsyaApp.db')
         bot.polling(none_stop=True)
 
         

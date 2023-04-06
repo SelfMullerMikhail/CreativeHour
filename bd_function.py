@@ -36,6 +36,7 @@ class BdHelper():
     @decore_bd_function
     def __get_cursor(self):
         conn = sqlite3.connect(self.database)
+        conn.execute('PRAGMA encoding = "UTF-8"')
         cursor = conn.cursor()
         return cursor, conn
 
@@ -61,17 +62,17 @@ class BdHelper():
         return info[0]
             
 
-    @decore_bd_function
-    def get_time_zone(self, user_id):
-        cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""SELECT time_zone 
-                                FROM ReadyUsers
-                                WHERE user_id = {user_id}""") 
-        info = cursor.fetchall()
-        if info == []:
-            info = 0
-        self.__close_cursor_and_conn(cursor, conn)
-        return int(info[0][0])
+    # @decore_bd_function
+    # def get_time_zone(self, user_id):
+    #     cursor, conn =  self.__get_cursor()
+    #     cursor.execute(f"""SELECT time_zone 
+    #                             FROM ReadyUsers
+    #                             WHERE user_id = {user_id}""") 
+    #     info = cursor.fetchall()
+    #     if info == []:
+    #         info = 0
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return int(info[0][0])
     
 
     @decore_bd_function
@@ -85,12 +86,12 @@ class BdHelper():
     
 
 
-    @decore_bd_function
-    def get_info_all_users_in_chats(self):
-        cursor, conn =  self.__get_cursor()
-        info = cursor.execute(f"""SELECT * FROM view_persons_in_chats""").fetchall()
-        self.__close_cursor_and_conn(cursor, conn)
-        return info
+    # @decore_bd_function
+    # def get_info_all_users_in_chats(self):
+    #     cursor, conn =  self.__get_cursor()
+    #     info = cursor.execute(f"""SELECT * FROM view_persons_in_chats""").fetchall()
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return info
         
     @decore_bd_function
     def delete_user(self, user_id):
@@ -171,12 +172,12 @@ class BdHelper():
             self.__close_cursor_and_conn(cursor, conn)
             return info
 
-    @decore_bd_function
-    def remove_user(self, user_id):
-        cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""DELETE FROM ReadyUsers WHERE user_id = {user_id}""")
-        self.__close_cursor_and_conn(cursor, conn)
-        return None
+    # @decore_bd_function
+    # def remove_user(self, user_id):
+    #     cursor, conn =  self.__get_cursor()
+    #     cursor.execute(f"""DELETE FROM ReadyUsers WHERE user_id = {user_id}""")
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return None
 
     @decore_bd_function 
     def change_active_status(self, user_id, status):
@@ -220,13 +221,13 @@ class BdHelper():
         return info[0][0], info[0][1], info[0][2], info[0][3]
 
         
-    @decore_bd_function
-    def upgrade_room_info_delete(self, id_chat, min_start_time, max_end_time):
-        cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""UPDATE Chats SET min_start_time = '{min_start_time}', 
-                                            max_end_time = '{max_end_time}' WHERE id_chat = '{id_chat}'""")
-        self.__close_cursor_and_conn(cursor, conn)
-        return None
+    # @decore_bd_function
+    # def upgrade_room_info_delete(self, id_chat, min_start_time, max_end_time):
+    #     cursor, conn =  self.__get_cursor()
+    #     cursor.execute(f"""UPDATE Chats SET min_start_time = '{min_start_time}', 
+    #                                         max_end_time = '{max_end_time}' WHERE id_chat = '{id_chat}'""")
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return None
     
     @decore_bd_function
     def add_chat_into_active(self, id_chat, name):
@@ -242,14 +243,14 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return None
 
-    @decore_bd_function
-    def get_time_from_chat(self, id_chat):
-            cursor, conn =  self.__get_cursor()
-            info = cursor.execute(f"""SELECT min(user_time_start), max(user_time_end)
-            FROM view_active_chats_info
-            WHERE id_chat = '{id_chat}';""").fetchall()[0]
-            self.__close_cursor_and_conn(cursor, conn)
-            return info[0], info[1]
+    # @decore_bd_function
+    # def get_time_from_chat(self, id_chat):
+    #         cursor, conn =  self.__get_cursor()
+    #         info = cursor.execute(f"""SELECT min(user_time_start), max(user_time_end)
+    #         FROM view_active_chats_info
+    #         WHERE id_chat = '{id_chat}';""").fetchall()[0]
+    #         self.__close_cursor_and_conn(cursor, conn)
+    #         return info[0], info[1]
 
     @decore_bd_function
     def update_rooms_users_count(self, id_chat, count):
@@ -267,14 +268,14 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return info[0][0], info[0][1]
 
-    @decore_bd_function
-    def get_rooms_times(self, id_chat):
-        cursor, conn =  self.__get_cursor()
-        info = cursor.execute(f"""SELECT min_start_time, max_end_time
-        FROM Chats
-        WHERE id_chat = '{id_chat}';""").fetchall()
-        self.__close_cursor_and_conn(cursor, conn)
-        return info[0][0], info[0][1]
+    # @decore_bd_function
+    # def get_rooms_times(self, id_chat):
+    #     cursor, conn =  self.__get_cursor()
+    #     info = cursor.execute(f"""SELECT min_start_time, max_end_time
+    #     FROM Chats
+    #     WHERE id_chat = '{id_chat}';""").fetchall()
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return info[0][0], info[0][1]
 
     @decore_bd_function
     def update_room_info_time(self, id_chat, time, boarder):
@@ -286,7 +287,6 @@ class BdHelper():
     @decore_bd_function
     def dell_user_from_Active_Chat(self, id_user=None):
         cursor, conn =  self.__get_cursor()
-        print(id_user, "ffdfsfs")
         cursor.execute(f"""DELETE FROM Active_Chat WHERE id_user = {id_user}; """)
         self.__close_cursor_and_conn(cursor, conn)
         return None
@@ -298,14 +298,14 @@ class BdHelper():
         self.__close_cursor_and_conn(cursor, conn)
         return None
     
-    @decore_bd_function
-    def set_chats_time(self, id_chat, time_start, time_end):
-        cursor, conn =  self.__get_cursor()
-        cursor.execute(f"""UPDATE Chats SET min_start_time = '{time_start}', 
-                                                max_end_time = '{time_end}'
-                                                WHERE id_chat = '{id_chat}'; """)
-        self.__close_cursor_and_conn(cursor, conn)
-        return None
+    # @decore_bd_function
+    # def set_chats_time(self, id_chat, time_start, time_end):
+    #     cursor, conn =  self.__get_cursor()
+    #     cursor.execute(f"""UPDATE Chats SET min_start_time = '{time_start}', 
+    #                                             max_end_time = '{time_end}'
+    #                                             WHERE id_chat = '{id_chat}'; """)
+    #     self.__close_cursor_and_conn(cursor, conn)
+    #     return None
     
     @decore_bd_function
     def write_messag_history(self, chat_id, user_id, message_id):
