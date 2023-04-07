@@ -257,13 +257,13 @@ class CreativeHour():
                 bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
             
         #Send data base 
-        def get_bd(db_name:str, table_name:str=None, columns:list=None):
+        def get_bd(message, db_name:str, table_name:str=None, columns:list=None):
             try:
                 if table_name != None:
                     self.exel_creator.get_statistic_exel(table_name, columns)
                     db_name = table_name + ".xlsx"
                 with open(db_name, 'rb') as file:
-                    bot.send_document(ADMIN_IP_MISHA, file)
+                    bot.send_document(message.from_user.id, file)
             except Exception as e:
                 print(e)
                 
@@ -420,13 +420,13 @@ class CreativeHour():
                     link = bot.create_chat_invite_link(chat_id=i[1], name=i[2])
                     bot.send_message(message.from_user.id, link)
             elif message.text == "GET STAT 2":
-                get_bd('Statistic.db', "user_activity_start", ["id", "user_id", "user_name", "came_time"])
-                get_bd('Statistic.db', "user_came", ["id", "user_id", "user_name", "chat_id", "came_time"])
+                get_bd(message, 'Statistic.db', "user_activity_start", ["id", "user_id", "user_name", "came_time"])
+                get_bd(message, 'Statistic.db', "user_came", ["id", "user_id", "user_name", "chat_id", "came_time"])
             elif message.text == "GET STAT 1":
-                get_bd('Statistic.db', "users", ["id", "user_id", "user_name"])
+                get_bd(message, 'Statistic.db', "users", ["id", "user_id", "user_name"])
             elif message.text == "GET DB":
-                get_bd('AsyaApp.db') 
-                get_bd('Statistic.db')
+                get_bd(message,'AsyaApp.db') 
+                get_bd(message, 'Statistic.db')
         bot.polling(none_stop=True)
 
         
