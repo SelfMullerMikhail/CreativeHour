@@ -80,10 +80,10 @@ class BdHelper():
     
 
     @decore_bd_function
-    def get_ReadyUser_from_time(self, time_now, time_need):
+    def get_ReadyUser_from_time(self, time_now, time_need, table):
         cursor, conn =  self.__get_cursor()
         info = cursor.execute(f"""SELECT *
-                            FROM view_persons_in_chats
+                            FROM {table}
                             WHERE time_zone + '{time_now}' = {time_need}""").fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return info

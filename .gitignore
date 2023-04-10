@@ -161,6 +161,8 @@ cython_debug/
 
 test_bd/*
 work_bd/*
+workBD/*
+testBD/*
 sql_files/*
 !fire_members_logs/
 !error_logs/
