@@ -25,7 +25,7 @@ class TimeCheker():
                         for user in users_wake_up:
                             try:
                                 self.bot.bot.send_message(user[1], MORNING_MESSAGE)
-                            except:
-                                ...
+                            except Exception as e:
+                                self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))
                 except Exception as e:
-                    self.bot.bot.send_message(user[1], str(e))
+                    self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))

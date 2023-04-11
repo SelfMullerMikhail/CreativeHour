@@ -1,13 +1,14 @@
-import telebot
-from telebot import types
-from bd_function import BdHelper
-import threading
-import re
 import datetime as dt
-from loger import write_logs
-from CONSTAINS import *
+import re
+import telebot
 import time
+import threading
+from telebot import types
+
+from bd_function import BdHelper
 from exel_statistic import ExelCreateor
+from CONSTAINS import *
+from time_cheker_threading import TimeCheker
 
 
 class CreativeHour:
@@ -439,9 +440,6 @@ class CreativeHour:
 
 
         
-
-
-from time_cheker_threading import TimeCheker
 if __name__ == '__main__':
     while True:
         try:
