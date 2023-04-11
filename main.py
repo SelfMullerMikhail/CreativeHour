@@ -364,7 +364,7 @@ class CreativeHour:
             self.bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
         elif self.get_match(message):
             self.set_time_zone_func(message, self.get_match(message))
-            self.bot.send_message(ADMIN_IP_MISHA, f"User {message.from_user.id} set time zone {self.get_match(message)}")
+            self.bot.send_message(ADMIN_IP_MISHA, f"User {message.from_user.first_name} set time zone {self.get_match(message)}")
         elif message.text == "Menu":
             markup = self.menu(message)
             self.bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT, reply_markup=markup)

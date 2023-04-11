@@ -23,6 +23,9 @@ class TimeCheker():
                                 self.bot.kick_members(user[3], user[0])
                         users_wake_up = self.database.get_ReadyUser_from_time(time_now, PUSHING_TIME, "ReadyUsers")
                         for user in users_wake_up:
-                            self.bot.bot.send_message(user[1], MORNING_MESSAGE)
+                            try:
+                                self.bot.bot.send_message(user[1], MORNING_MESSAGE)
+                            except:
+                                ...
                 except Exception as e:
                     self.bot.bot.send_message(user[1], str(e))
