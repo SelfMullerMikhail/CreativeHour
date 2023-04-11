@@ -167,7 +167,6 @@ class CreativeHour:
         self.data_base.set_time_zone(message.from_user.id, time_zone)
         markup = self.menu(message)
         self.bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ", reply_markup=markup)
-        self.bot.send_message(ADMIN_IP_MISHA, f"User {message.from_user.id} set time zone {time_zone}")
 
     def set_active_time_panel(self, call):
         markup = types.InlineKeyboardMarkup()
