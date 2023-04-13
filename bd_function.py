@@ -286,7 +286,7 @@ class BdHelper:
 
 if __name__ == "__main__":
         a = BdHelper("AsyaApp.db")
-        # print(a.get_match('02:00', '20:00'), "True")
+        print(a.get_active_users('2023-04-13 20:00', '2023-04-14 00:00'), "True")
         # print(a.get_match('09:00', '11:00'), "True")
         # print(a.get_match('10:00', '12:00'), "True")
         # print(a.get_match('09:00', '12:00'), "True")
@@ -298,4 +298,4 @@ if __name__ == "__main__":
         # print(a.get_ReadyUser_from_time('12:30', '10'))
         # info = a.get_free_room_id(0, 0)
         # print(info[3] == "None")
-        a.dell_user_from_Active_Chat(402816936)
+        # a.dell_user_from_Active_Chat(402816936)

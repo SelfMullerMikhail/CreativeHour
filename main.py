@@ -24,9 +24,7 @@ class CreativeHour:
         self.bot = telebot.TeleBot(API)
         
     def check_event(self):
-        print(self.event.is_set())
         if self.event.is_set():
-            print("hello")
             self.event.clear()
             time.sleep(1)
             
@@ -67,7 +65,9 @@ class CreativeHour:
 
     def send_links_to_users(self, active_users, link, markup):
         for user in active_users:
+            print(user)
             try:
+                time.sleep(0.5)
                 self.bot.send_message(ADMIN_IP_MISHA, f"Send link to {user[2]}")
                 self.bot.send_message(user[0], link.invite_link, reply_markup=markup)
             except:
@@ -254,9 +254,9 @@ class CreativeHour:
         self.bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
         self.data_base.change_active_status(message.from_user.id, "True")
         time.sleep(1)
-        if len(self.data_base.get_match(time_start_person, time_end_person)) > 1:
-            active_users = self.data_base.get_active_users(time_start_person, time_end_person)
-            chat_id, name_room, _, _ = self.data_base.get_free_room_id(time_start_person, time_end_person)
+        if len(self.data_base.get_match(time_start_person.strftime('%Y-%m-%d %H:%M'), time_end_person.strftime('%Y-%m-%d %H:%M'))) > 1:
+            active_users = self.data_base.get_active_users(time_start_person.strftime('%Y-%m-%d %H:%M'), time_end_person.strftime('%Y-%m-%d %H:%M'))
+            chat_id, name_room, _, _ = self.data_base.get_free_room_id(time_start_person.strftime('%Y-%m-%d %H:%M'), time_end_person.strftime('%Y-%m-%d %H:%M'))
             if chat_id == None:
                 self.bot.send_message(message.from_user.id, "No free rooms")
                 return
@@ -477,15 +477,15 @@ class CreativeHour:
 
         
 if __name__ == '__main__':
-    while True:
-        try:
-            time.sleep(1)
-            event = threading.Event()
-            bot = CreativeHour(API, event)
-            time_cheker = TimeCheker(event, bot=bot)
-            t = threading.Thread(target=time_cheker.time_cheker)
-            t.daemon = True 
-            t.start()
-            bot.start()
-        except Exception as e:
-            print(f"Dangerous_Error: {e}")
+    # while True:
+        # try:
+        time.sleep(1)
+        event = threading.Event()
+        bot = CreativeHour(API, event)
+        time_cheker = TimeCheker(event, bot=bot)
+        t = threading.Thread(target=time_cheker.time_cheker)
+        t.daemon = True 
+        t.start()
+        bot.start()
+        # except Exception as e:
+        #     print(f"Dangerous_Error: {e}")
