@@ -187,7 +187,7 @@ class CreativeHour:
         for i in range(0, len(column_1)):
             markup.row(column_1[i], column_2[i])
         markup.add(types.InlineKeyboardButton("Hide", callback_data="Hide"))
-        markup.add(types.InlineKeyboardButton("Start", callback_data="startsearching"))
+        # markup.add(types.InlineKeyboardButton("Start", callback_data="startsearching"))
         self.bot.edit_message_text(chat_id=call.message.chat.id, message_id=self.start_message_id[call.from_user.id], text=f"{INSTRUCTION_FOR_SET_ACTIVE_TIME}\n\nStart time     -     End time", reply_markup=markup)
 
 
@@ -216,8 +216,9 @@ class CreativeHour:
         self.data_base.set_active_time_start(call.from_user.id, new_time_obj)
         self.choose_time[call.from_user.id] += 1
         if self.choose_time[call.from_user.id] == 2:
-            self.hide(call)
+            self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.choose_time.pop(call.from_user.id)
+            
             self.start_search(call)
 
     def end_time(self, call, time):
@@ -228,7 +229,7 @@ class CreativeHour:
         self.data_base.set_active_time_end(call.from_user.id, new_time_obj)
         self.choose_time[call.from_user.id] += 1
         if self.choose_time[call.from_user.id] == 2:
-            self.hide(call)
+            self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.choose_time.pop(call.from_user.id)
             self.start_search(call)
 

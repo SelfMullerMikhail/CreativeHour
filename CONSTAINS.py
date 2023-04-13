@@ -31,7 +31,7 @@ ALREADY_STOP_SEARCHING_TEXT = "You have already ended your search."
 APPROVE_TO_JOIN_TEXT = "You can now join the chat!"
 NEED_TIME_ZONE_TEXT = "I need your timezone."
 CHOOSE_TIME_ZONE_TEXT = "Select your timezone."
-INCORRECT__TIME_TEXT = "Start time cannot equal or exceed end time."
+INCORRECT__TIME_TEXT = "Start time cannot equal or exceed end time. Try again."
 CHOOSE_MOUTION_TEXT = "Select what you want to do."
 STOP_SEARCHING_TEXT = "You have ended your search."
 SET_ACTIVE_TIME_TEXT = "Choose your creative hour."
@@ -55,4 +55,4 @@ FIRST_MESSAGE_GROUP = """Hey, creatives!
 INSTRUCTION_FOR_SET_ACTIVE_TIME = """""
 Choose your start time on the left.
 Choose your end time on the right.
-Press start!"""
+Wait!"""
