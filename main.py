@@ -4,6 +4,7 @@ import telebot
 import time
 import threading
 from telebot import types
+import os
 
 from bd_function import BdHelper
 from exel_statistic import ExelCreator
@@ -366,7 +367,7 @@ class CreativeHour:
             self.bot.send_message(call.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
             
     def get_log(self, message):
-        import os
+        
         try:
             data = str(os.getcwd()) + f"\\error_logs\\logs.txt"
             with open(data, 'rb') as file:
