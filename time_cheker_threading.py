@@ -15,6 +15,7 @@ class TimeCheker:
     def kick_members(self, users):
         for user in users:
             try:
+                time.sleep(0.2)
                 self.bot.kick_members(user[3], user[0])
             except Exception as e:
                 self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))
@@ -24,13 +25,14 @@ class TimeCheker:
     def send_pushing(self, users_wake_up):
         for user in users_wake_up:
             try:
+                time.sleep(0.2)
                 self.bot.bot.send_message(user[1], MORNING_MESSAGE)
             except Exception as e:
                 self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))
 
     def time_cheker(self):
             while True:
-                if time.localtime().tm_min == 18:
+                if time.localtime().tm_min == 0:
                     self.event.set()
                     users = self.database.get_ReadyUser_from_time(TIME_FIRE, "view_persons_in_chats")   
                     self.kick_members(users)
