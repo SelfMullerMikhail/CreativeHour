@@ -3,7 +3,7 @@
 # Work
 API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
 
-VERSION = "Version 7.3"
+VERSION = "Version 7.4"
 
 TIME_FIRE = 5
 PUSHING_TIME = 9
@@ -12,6 +12,9 @@ ADMIN_IP_MISHA = 402816936
 ADMIN_IP_ASYA = 243980106
 TOTAL_ADMINS = [ADMIN_IP_MISHA, ADMIN_IP_ASYA]  
 
+WELCOME_MESSAGE = "Welcome to Creative Hour group!"
+KICK_MESSAGE = "You have been removed from the group because you are not logged in."
+APROVE_MESSAGE = "Push '/approve' within 30 seconds or you will be removed."
 MORNING_MESSAGE = """Hey! Come pick your creative hour and I’ll find your perfect co-workers for today 😎"""
 DELETE_ACCOUNT_TEXT = "Are you sure?"
 DELETED_ACCOUNT_TEXT = "Your account has been deleted."

@@ -4,7 +4,7 @@ from CONSTAINS import ADMIN_IP_MISHA
 
 class Decoration:
 
-    def __write_logs(self, info: str):
+    def _write_logs(self, info: str):
         data = os.path.join(os.getcwd(), "error_logs", "logs")
         with open(f"{data}.txt", "a") as file:
             time = datetime.datetime.now().strftime("%H:%M:%S")
@@ -17,5 +17,5 @@ class Decoration:
                 info = func(*args)
                 return info
             except Exception as e:
-                self.__write_logs(str(e))
+                self._write_logs(str(e))
         return wrapper

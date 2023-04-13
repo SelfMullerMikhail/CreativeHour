@@ -17,6 +17,8 @@ class CreativeHour:
     def __init__(self, API, event):
         super().__init__()
         self.event =event
+        self.users_hello = []
+        self.choose_time = {}
         self.exel_creator = ExelCreator()
         self.data_base = BdHelper('AsyaApp.db')
         self.data_base_statistic = BdHelper('Statistic.db')
@@ -65,10 +67,10 @@ class CreativeHour:
 
     def send_links_to_users(self, active_users, link, markup):
         for user in active_users:
-            print(user)
             try:
                 time.sleep(0.5)
                 self.bot.send_message(ADMIN_IP_MISHA, f"Send link to {user[2]}")
+                self.bot.send_message(user[0], JOIN_GROUP_TEXT)
                 self.bot.send_message(user[0], link.invite_link, reply_markup=markup)
             except:
                 self.bot.send_message(ADMIN_IP_MISHA, f"Error send message to {user[0]}")
@@ -168,6 +170,7 @@ class CreativeHour:
         self.bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ", reply_markup=markup)
 
     def set_active_time_panel(self, call):
+        self.choose_time[call.from_user.id] = 0
         markup = types.InlineKeyboardMarkup()
         item1 = types.InlineKeyboardButton("See time options", callback_data="show_time_panel")
         markup.add(item1)
@@ -187,12 +190,12 @@ class CreativeHour:
         markup.add(types.InlineKeyboardButton("Start", callback_data="startsearching"))
         self.bot.edit_message_text(chat_id=call.message.chat.id, message_id=self.start_message_id[call.from_user.id], text=f"{INSTRUCTION_FOR_SET_ACTIVE_TIME}\n\nStart time     -     End time", reply_markup=markup)
 
+
     def hide(self, call):
         markup = types.InlineKeyboardMarkup()
         item1 = types.InlineKeyboardButton("Got it!", callback_data="show_time_panel")
         markup.add(item1)
         self.bot.edit_message_text(chat_id=call.message.chat.id, message_id=self.start_message_id[call.from_user.id], text=INSTRUCTION_FOR_SET_ACTIVE_TIME, reply_markup=markup)
-        
 
 
     def get_users_time(self, user_UTC_time, time_str):
@@ -205,35 +208,29 @@ class CreativeHour:
             today += dt.timedelta(days=1)
         return today.strftime("%Y-%m-%d %H:%M")
 
-
-
-
-
-
-
-
-
-
-
-
     def start_time(self, call, time):
         markup = self.menu(call)
         user_UTC_time = int(self.data_base.get_user_info_from_id(call.from_user.id)[3])
         new_time_obj = self.get_users_time(user_UTC_time ,time)
-        
         self.bot.send_message(call.from_user.id, f"Your start time: {time}", reply_markup=markup)
         self.data_base.set_active_time_start(call.from_user.id, new_time_obj)
+        self.choose_time[call.from_user.id] += 1
+        if self.choose_time[call.from_user.id] == 2:
+            self.hide(call)
+            self.choose_time.pop(call.from_user.id)
+            self.start_search(call)
 
     def end_time(self, call, time):
         markup = self.menu(call)
         user_UTC_time = int(self.data_base.get_user_info_from_id(call.from_user.id)[3])
         new_time_obj = self.get_users_time(user_UTC_time ,time)
-        
         self.bot.send_message(call.from_user.id, f"Your end time: {time}", reply_markup=markup)
         self.data_base.set_active_time_end(call.from_user.id, new_time_obj)
-        
-        
-        
+        self.choose_time[call.from_user.id] += 1
+        if self.choose_time[call.from_user.id] == 2:
+            self.hide(call)
+            self.choose_time.pop(call.from_user.id)
+            self.start_search(call)
 
     def start_search(self, message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add(types.KeyboardButton("Menu"))
@@ -242,7 +239,6 @@ class CreativeHour:
         if person_info[5] == None or person_info[6] == None:
             self.set_active_time_text(message, markup)
             return
-        
         time_start_person = dt.datetime.strptime(person_info[5], '%Y-%m-%d %H:%M')
         time_end_person = dt.datetime.strptime(person_info[6], '%Y-%m-%d %H:%M')
         if time_start_person >= time_end_person:
@@ -266,6 +262,7 @@ class CreativeHour:
             link = self.bot.create_chat_invite_link(chat_id = chat_id, name=name_room, expire_date= dt.datetime.now()+dt.timedelta(minutes=30))
             self.send_links_to_users(active_users, link, markup)
         else:
+            time.sleep(1)
             self.bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
         
     #Send data base 
@@ -289,7 +286,9 @@ class CreativeHour:
         self.upgrade_room_info_time(chat_id)
         count = self.bot.get_chat_member_count(chat_id) - 1
         self.data_base.update_rooms_users_count(chat_id, count)
-        self.bot.send_message(user_id, JOIN_GROUP_TEXT)
+        welcome_message = self.bot.send_message(update.chat.id, WELCOME_MESSAGE)
+        time.sleep(10)
+        self.bot.delete_message(update.chat.id, welcome_message.message_id)
     
     def left_chat_member(self, message):
             user_id = message.from_user.id
@@ -299,6 +298,7 @@ class CreativeHour:
             self.upgrade_room_info_time(chat_id)
             if time.localtime().tm_min != 0:
                 self.bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
+            time.sleep(0.5)
             count = self.bot.get_chat_member_count(chat_id) - 1
             self.data_base.update_rooms_users_count(chat_id, count)
             if count == 0:
@@ -420,27 +420,36 @@ class CreativeHour:
         elif message.text == "GET DB":
             self.get_bd(message,'AsyaApp.db') 
             self.get_bd(message, 'Statistic.db')
-        elif message.text == "er":
-            self.er_func()
         elif message.text == "get_log":
             self.get_log(message)
     
-    @Decoration().decore_bd_function
-    def er_func(self):
-        100 / 0
-    
+    def approve_weit_time(self, update):
+        self.approve_message = self.bot.send_message(update.chat.id, APROVE_MESSAGE)
+        time.sleep(30)
+        if update.from_user.id not in self.users_hello:
+            self.kick_members(update.chat.id, update.from_user.id )
+            self.bot.send_message(update.from_user.id, KICK_MESSAGE)
+            self.bot.delete_message(update.chat.id, self.approve_message.message_id)
+            return
+
     def start(self):
         @self.bot.message_handler(content_types=['new_chat_members'])
         def join_request_handler(update: types.ChatJoinRequest):
+            self.bot.delete_message(update.chat.id, update.message_id)
             self.check_event()
-            self.join_request(update)
-            self.bot.send_message(ADMIN_IP_MISHA, f"{update.from_user.first_name} join chat {update.chat.id}")
+            threading.Thread(target=self.approve_weit_time, args=(update,)).start()
+
+        @self.bot.message_handler(commands=['approve'])
+        def aprove_func(call):
+            self.users_hello.append(call.from_user.id)
+            self.bot.delete_message(call.chat.id, self.approve_message.message_id)
+            threading.Thread(target=self.join_request, args=(call,)).start()
+            # self.bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.first_name} join chat {call.chat.id}")
 
         # If users leave chat
         @self.bot.message_handler(content_types=['left_chat_member'])
         def left_chat_member_handler(update: types.ChatMemberLeft):
             self.check_event()
-            print("left_chat_member_handler")
             self.left_chat_member(update)
             self.bot.send_message(ADMIN_IP_MISHA, f"{update.from_user.first_name} left chat {update.chat.id}")
 
@@ -477,15 +486,15 @@ class CreativeHour:
 
         
 if __name__ == '__main__':
-    # while True:
-        # try:
-        time.sleep(1)
-        event = threading.Event()
-        bot = CreativeHour(API, event)
-        time_cheker = TimeCheker(event, bot=bot)
-        t = threading.Thread(target=time_cheker.time_cheker)
-        t.daemon = True 
-        t.start()
-        bot.start()
-        # except Exception as e:
-        #     print(f"Dangerous_Error: {e}")
+    while True:
+        try:
+            event = threading.Event()
+            bot = CreativeHour(API, event)
+            time_cheker = TimeCheker(event, bot=bot)
+            t = threading.Thread(target=time_cheker.time_cheker)
+            t.daemon = True 
+            t.start()
+            bot.start()
+            time.sleep(10)
+        except Exception as e:
+            Decoration()._write_logs(e)
