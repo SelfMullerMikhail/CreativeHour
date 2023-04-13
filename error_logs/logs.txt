@@ -1,0 +1,4 @@
+
+22:30:47 division by zero
+22:33:54 division by zero
+22:52:53 division by zero
