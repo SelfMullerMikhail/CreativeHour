@@ -367,9 +367,8 @@ class CreativeHour:
             self.bot.send_message(call.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
             
     def get_log(self, message):
-        
         try:
-            data = str(os.getcwd()) + f"\\error_logs\\logs.txt"
+            data = os.path.join(os.getcwd(), "error_logs", "logs.txt")
             with open(data, 'rb') as file:
                 self.bot.send_document(message.from_user.id, file)
         except Exception as e:
@@ -480,6 +479,7 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
+            time.sleep(1)
             event = threading.Event()
             bot = CreativeHour(API, event)
             time_cheker = TimeCheker(event, bot=bot)
