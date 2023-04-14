@@ -34,8 +34,9 @@ class TimeCheker:
             while True:
                 if time.localtime().tm_min == 0:
                     self.event.set()
-                    users = self.database.get_ReadyUser_from_time(TIME_FIRE, "view_persons_in_chats")   
-                    self.kick_members(users)
+                    users = self.database.get_ReadyUser_from_time(TIME_FIRE, "view_persons_in_chats") 
+                    for i in range(3):  
+                        self.kick_members(users)
                     users_wake_up = self.database.get_ReadyUser_from_time(PUSHING_TIME, "ReadyUsers")
                     self.send_pushing(users_wake_up)
-                time.sleep(10)
+                time.sleep(60)

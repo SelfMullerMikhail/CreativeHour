@@ -170,7 +170,7 @@ class CreativeHour:
         self.bot.send_message(message.from_user.id, f"Done, your time zone: {time_zone} hour/s ", reply_markup=markup)
 
     def set_active_time_panel(self, call):
-        self.choose_time[call.from_user.id] = 0
+        self.choose_time[call.from_user.id] = 'none'
         markup = types.InlineKeyboardMarkup()
         item1 = types.InlineKeyboardButton("See time options", callback_data="show_time_panel")
         markup.add(item1)
@@ -214,12 +214,14 @@ class CreativeHour:
         new_time_obj = self.get_users_time(user_UTC_time ,time)
         self.bot.send_message(call.from_user.id, f"Your start time: {time}", reply_markup=markup)
         self.data_base.set_active_time_start(call.from_user.id, new_time_obj)
-        self.choose_time[call.from_user.id] += 1
-        if self.choose_time[call.from_user.id] == 2:
+        if self.choose_time[call.from_user.id] == 'end':
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.choose_time.pop(call.from_user.id)
-            
             self.start_search(call)
+            return
+        self.choose_time[call.from_user.id] = 'start'
+            
+            
 
     def end_time(self, call, time):
         markup = self.menu(call)
@@ -227,11 +229,11 @@ class CreativeHour:
         new_time_obj = self.get_users_time(user_UTC_time ,time)
         self.bot.send_message(call.from_user.id, f"Your end time: {time}", reply_markup=markup)
         self.data_base.set_active_time_end(call.from_user.id, new_time_obj)
-        self.choose_time[call.from_user.id] += 1
-        if self.choose_time[call.from_user.id] == 2:
+        if self.choose_time[call.from_user.id] == 'start':
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.choose_time.pop(call.from_user.id)
             self.start_search(call)
+        self.choose_time[call.from_user.id] = 'end'
 
     def start_search(self, message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add(types.KeyboardButton("Menu"))

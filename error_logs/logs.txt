@@ -66,4 +66,6 @@
 01:14:59 402816936
 01:15:03 402816936
 01:23:04 402816936
-01:23:22 402816936
+01:23:22 402816936
+01:47:11 HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+11:47:21 HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)

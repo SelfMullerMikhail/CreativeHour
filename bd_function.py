@@ -55,9 +55,13 @@ class BdHelper:
     @Decoration().decore_bd_function
     def get_ReadyUser_from_time(self, time_need, table):
         cursor, conn =  self.__get_cursor()
-        info = cursor.execute(f"""SELECT *
-                            FROM {table}
-                            WHERE time_zone + time() = {time_need}""").fetchall()
+        # info = cursor.execute(f"""SELECT *
+        #                     FROM {table}
+        #                     WHERE time_zone + time() = {time_need}""").fetchall()
+        info = cursor.execute(f"""SELECT *  
+                                FROM {table}
+                                WHERE strftime('%H:%M', datetime('now', time_zone || ' hours')) = '{time_need}';""").fetchall()
+        
         self.__close_cursor_and_conn(cursor, conn)
         return info
         
@@ -286,8 +290,8 @@ class BdHelper:
 
 if __name__ == "__main__":
         a = BdHelper("AsyaApp.db")
-        print(a.get_active_users('2023-04-13 20:00', '2023-04-14 00:00'), "True")
-        # print(a.get_match('09:00', '11:00'), "True")
+        # print(a.get_active_users('2023-04-13 20:00', '2023-04-14 00:00'), "True")
+        print(a.get_ReadyUser_from_time('10:43', 'ReadyUsers'))
         # print(a.get_match('10:00', '12:00'), "True")
         # print(a.get_match('09:00', '12:00'), "True")
         # print(a.get_match('17:00:00', '18:00:00'), "True")
