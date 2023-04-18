@@ -78,11 +78,12 @@ class CreativeHour:
         return re.search(r'Set time zone ([-+]\d) UTC', message.text)   
     
     def match_set_json(self, message):
-        return re.match(r'^JS\s\S+\s\S+$', message.text)
+        return re.match(r'^JS\s+\S+(?:\s+\S+)+$', message.text)
     
     def match_set_json_function(self, message):
         try:
-            JsonConnector().info_in_json(message.text.split()[1], message.text.split()[2])
+            print(message.text.split()[2:])
+            JsonConnector().info_in_json(message.text.split()[1], message.text.split()[2:])
             return True
         except Exception as e:
             Decoration()._write_logs(str(e))

@@ -7,8 +7,9 @@ class JsonConnector:
         
     def info_in_json(self, key, value):
         with open('CONSTANT.json', 'r') as f:
+            str_info = " ".join(value)
             info = json.loads(f.read())
-            info[key] = value
+            info[key] = str_info
             ...
         with open('CONSTANT.json', 'w') as f:
             f.write(json.dumps(info))
