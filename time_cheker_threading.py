@@ -2,7 +2,7 @@ import time
 import threading
 
 from bd_function import BdHelper
-from CONSTAINS import TIME_FIRE, ADMIN_IP_MISHA, PUSHING_TIME, MORNING_MESSAGE
+from CONSTAINS import TIME_FIRE, PUSHING_TIME, MORNING_MESSAGE
 from  decoration import Decoration
 
 class TimeCheker:
@@ -14,29 +14,22 @@ class TimeCheker:
     @Decoration().decore_bd_function
     def kick_members(self, users):
         for user in users:
-            try:
-                time.sleep(0.2)
-                self.bot.kick_members(user[3], user[0])
-            except Exception as e:
-                self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))
+            time.sleep(0.2)
+            self.bot.kick_members(user[3], user[0])
+            self.bot.unbun_members(user[3], user[0])
                 
 
     @Decoration().decore_bd_function
     def send_pushing(self, users_wake_up):
         for user in users_wake_up:
-            try:
-                time.sleep(0.2)
-                self.bot.bot.send_message(user[1], MORNING_MESSAGE)
-            except Exception as e:
-                self.bot.bot.send_message(ADMIN_IP_MISHA, str(e))
+            time.sleep(0.2)
+            self.bot.try_send_message(user[1], MORNING_MESSAGE())
 
     def time_cheker(self):
             while True:
-                if time.localtime().tm_min == 0:
-                    self.event.set()
-                    users = self.database.get_ReadyUser_from_time(TIME_FIRE, "view_persons_in_chats") 
-                    for i in range(3):  
-                        self.kick_members(users)
-                    users_wake_up = self.database.get_ReadyUser_from_time(PUSHING_TIME, "ReadyUsers")
-                    self.send_pushing(users_wake_up)
+                self.event.set()
+                users = self.database.get_ReadyUser_from_time(TIME_FIRE(), "view_persons_in_chats") 
+                self.kick_members(users)
+                users_wake_up = self.database.get_ReadyUser_from_time(PUSHING_TIME(), "ReadyUsers")
+                self.send_pushing(users_wake_up)
                 time.sleep(60)

@@ -277,6 +277,14 @@ class BdHelper:
         groups = cursor.execute(f"""SELECT * FROM Chats;""").fetchall()
         self.__close_cursor_and_conn(cursor, conn)
         return groups
+    
+    @Decoration().decore_bd_function
+    def get_user_in_chats(self, user_id):
+        cursor, conn =  self.__get_cursor()
+        user_info = cursor.execute(f"""SELECT * FROM view_persons_in_chats WHERE user_id = {user_id};""").fetchall()
+        self.__close_cursor_and_conn(cursor, conn)
+        return user_info
+        
 
     @Decoration().decore_bd_function
     def __close_cursor_and_conn(self, cursor, conn):

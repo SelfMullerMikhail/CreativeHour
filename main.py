@@ -11,7 +11,7 @@ from exel_statistic import ExelCreator
 from CONSTAINS import *
 from time_cheker_threading import TimeCheker
 from decoration import Decoration
-
+from json_function import JsonConnector 
 
 class CreativeHour:
     def __init__(self, API, event):
@@ -31,18 +31,34 @@ class CreativeHour:
             time.sleep(1)
             
     def kick_members(self, chat_id:int, user_id:int):
-        self.bot.kick_chat_member(chat_id=chat_id, user_id= user_id)
-        self.bot.unban_chat_member(chat_id=chat_id, user_id= user_id)
+        try:
+            self.bot.kick_chat_member(chat_id=chat_id, user_id= user_id)
+        except:
+            Decoration()._write_logs(f"Error kick_members {user_id} from {chat_id}")
+    
+    def unbun_members(self, chat_id:int, user_id:int):
+        try:
+            self.bot.unban_chat_member(chat_id=chat_id, user_id= user_id)
+        except:
+            Decoration()._write_logs(f"Error unbun_members {user_id} from {chat_id}")
             
     def already_in_group(self, message, markup):
-        self.bot.send_message(ADMIN_IP_MISHA, f"{message.from_user.id} already in group")
-        self.bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT, reply_markup=markup)
+        markup = types.InlineKeyboardMarkup()
+        markup.add(types.InlineKeyboardButton("Left group", callback_data="markdell"))
+        markup.add(types.InlineKeyboardButton("Try again", callback_data="tryagain"))
+        self.bot.send_message(message.from_user.id, ALREADY_IN_GROUP_TEXT(), reply_markup=markup)
         
     def upgrade_room_info_time(self, id_chat):
         min_time, max_time = self.data_base.get_time_active_chat_users(id_chat)
         self.data_base.update_room_info_time(id_chat, min_time, 'min_start_time')
         self.data_base.update_room_info_time(id_chat, max_time, 'max_end_time')
         return None
+    
+    def try_send_message(self, chat, message):
+        try:
+            self.bot.send_message(chat, message)
+        except Exception as e:
+            Decoration()._write_logs(e)
 
     def dell_all(self):
             users = self.data_base.get_all_users()
@@ -50,16 +66,33 @@ class CreativeHour:
             for chat in chats:
                 for user in users:
                     self.kick_members(chat[0], user[0])
+                    self.unbun_members(chat[0], user[0])
             self.data_base.dell_all_ReadyUsers()
             self.data_base.dell_all_Active_Chat()
             self.data_base.dell_all_Messages()
 
     def get_match(self, message):
         return re.search(r'Set time zone ([-+]\d) UTC', message.text)   
-
+    
+    def match_set_json(self, message):
+        return re.match(r'^JS\s\S+\s\S+$', message.text)
+    
+    def match_set_json_function(self, message):
+        try:
+            JsonConnector().info_in_json(message.text.split()[1], message.text.split()[2])
+            return True
+        except Exception as e:
+            Decoration()._write_logs(str(e))
+            
+    def get_json(self, message):
+        try:
+            self.bot.send_message(message.from_user.id, JsonConnector().info_from_json())
+        except Exception as e:
+            Decoration()._write_logs(e)
+                        
 
     def set_active_time_text(self, message, markup):
-            self.bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT(), reply_markup=markup)
 
     def pin_first_message(self, chat_id):
             first_message = self.bot.send_message(chat_id=chat_id, text=FIRST_MESSAGE_GROUP)
@@ -69,20 +102,18 @@ class CreativeHour:
         for user in active_users:
             try:
                 time.sleep(0.5)
-                self.bot.send_message(ADMIN_IP_MISHA, f"Send link to {user[2]}")
-                self.bot.send_message(user[0], JOIN_GROUP_TEXT)
+                self.bot.send_message(user[0], JOIN_GROUP_TEXT())
                 self.bot.send_message(user[0], link.invite_link, reply_markup=markup)
             except:
-                self.bot.send_message(ADMIN_IP_MISHA, f"Error send message to {user[0]}")
+                Decoration()._write_logs(f"Error send_links_to_users {user[0]}")
 
     def create_account(self, message):
         try:
-            print(f"create_account {message.from_user.id}")
             self.data_base.add_user(message.from_user.id , message.from_user.username)
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             item1 = types.KeyboardButton("Set time zone")
             markup.add(item1)
-            self.bot.send_message(message.from_user.id, NEED_TIME_ZONE_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, NEED_TIME_ZONE_TEXT(), reply_markup=markup)
             self.data_base_statistic.insert_new_user(message.from_user.id, message.from_user.username)
         except Exception("Create_Account Wrong") as e:
             self.bot.send_message(message.from_user.id, e)
@@ -97,7 +128,7 @@ class CreativeHour:
             for i in range(1, 8):
                 item = types.KeyboardButton(f"Set time zone +{i} UTC")
                 markup.add(item)
-            self.bot.send_message(message.from_user.id, CHOOSE_TIME_ZONE_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, CHOOSE_TIME_ZONE_TEXT(), reply_markup=markup)
         except Exception("Set_time_zone Wrong") as e:
             self.bot.send_message(message.from_user.id, e)
 
@@ -124,11 +155,10 @@ class CreativeHour:
     def delete_account(self, message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         try:
-            print(f"delete_account {message.from_user.id}")
             item1 = types.KeyboardButton("Sure delete me")
             item2 = types.KeyboardButton("Menu")
             markup.add(item1, item2)
-            self.bot.send_message(message.from_user.id, DELETE_ACCOUNT_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, DELETE_ACCOUNT_TEXT(), reply_markup=markup)
         except Exception("delete_account Wrong") as e:
             self.bot.send_message(message.from_user.id, e)
             
@@ -136,28 +166,27 @@ class CreativeHour:
     def sure(self, message):
         try:
             user_id = message.from_user.id
-            print(f"sure {user_id}")
             id_chat = self.data_base.loock_user_into_chats(user_id)
             self.data_base.delete_user(user_id)
             if id_chat:
                 self.kick_members(id_chat[0][1], user_id)
+                self.unbun_members(id_chat[0][1], user_id)
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             item1 = types.KeyboardButton("Create account")
             markup.add(item1)
-            self.bot.send_message(user_id, DELETED_ACCOUNT_TEXT, reply_markup=markup)
+            self.bot.send_message(user_id, DELETED_ACCOUNT_TEXT(), reply_markup=markup)
         except Exception as e:
             self.bot.send_message(user_id, e)
 
     def stop_searching(self, message):
         try:
-            print(f"stop_searching {message.from_user.id}")
             checker = self.data_base.get_user_info_from_id(message.from_user.id)
             if checker[7] == "False":
-                self.bot.send_message(message.from_user.id, ALREADY_STOP_SEARCHING_TEXT)
+                self.bot.send_message(message.from_user.id, ALREADY_STOP_SEARCHING_TEXT())
                 return
             self.data_base.change_active_status(message.from_user.id, "False")
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add(types.KeyboardButton("Menu"))
-            self.bot.send_message(message.from_user.id, STOP_SEARCHING_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, STOP_SEARCHING_TEXT(), reply_markup=markup)
         except Exception("stop_searching Wrong") as e:
             self.bot.send_message(message.from_user.id, e)
 
@@ -174,7 +203,7 @@ class CreativeHour:
         markup = types.InlineKeyboardMarkup()
         item1 = types.InlineKeyboardButton("See time options", callback_data="show_time_panel")
         markup.add(item1)
-        self.start_message_id[call.from_user.id] = self.bot.send_message(call.chat.id, INSTRUCTION_FOR_SET_ACTIVE_TIME, reply_markup=markup).message_id
+        self.start_message_id[call.from_user.id] = self.bot.send_message(call.chat.id, INSTRUCTION_FOR_SET_ACTIVE_TIME(), reply_markup=markup).message_id
         
     def show_time_panel(self, call):
         markup = types.InlineKeyboardMarkup()
@@ -245,12 +274,12 @@ class CreativeHour:
         time_start_person = dt.datetime.strptime(person_info[5], '%Y-%m-%d %H:%M')
         time_end_person = dt.datetime.strptime(person_info[6], '%Y-%m-%d %H:%M')
         if time_start_person >= time_end_person:
-            self.bot.send_message(message.from_user.id, INCORRECT__TIME_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, INCORRECT__TIME_TEXT(), reply_markup=markup)
             return
         if self.data_base.loock_user_into_chats(message.from_user.id):
             self.already_in_group(message, markup=markup)
             return
-        self.bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT, reply_markup=markup)
+        self.bot.send_message(message.from_user.id, START_ACTIVE_TIME_TEXT(), reply_markup=markup)
         self.data_base.change_active_status(message.from_user.id, "True")
         time.sleep(1)
         if len(self.data_base.get_match(time_start_person.strftime('%Y-%m-%d %H:%M'), time_end_person.strftime('%Y-%m-%d %H:%M'))) > 1:
@@ -266,7 +295,7 @@ class CreativeHour:
             self.send_links_to_users(active_users, link, markup)
         else:
             time.sleep(1)
-            self.bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, DONT_FOUND_MATCH_TEXT(), reply_markup=markup)
         
     #Send data base 
     def get_bd(self, message, db_name:str, table_name:str=None, columns:list=None):
@@ -277,7 +306,7 @@ class CreativeHour:
             with open(db_name, 'rb') as file:
                 self.bot.send_document(message.from_user.id, file)
         except Exception as e:
-            print(e)
+            Decoration()._write_logs(e)
             
     def join_request(self, update: types.ChatJoinRequest):
         self.bot.delete_message(chat_id=update.chat.id, message_id=update.message_id)
@@ -289,52 +318,54 @@ class CreativeHour:
         self.upgrade_room_info_time(chat_id)
         count = self.bot.get_chat_member_count(chat_id) - 1
         self.data_base.update_rooms_users_count(chat_id, count)
-        welcome_message = self.bot.send_message(update.chat.id, WELCOME_MESSAGE)
+        welcome_message = self.bot.send_message(update.chat.id, WELCOME_MESSAGE())
         time.sleep(10)
         self.bot.delete_message(update.chat.id, welcome_message.message_id)
-    
+        
+    def dell_from_group(self, call):
+        user_info = self.data_base.get_user_in_chats(call.from_user.id)
+        self.data_base.dell_user_from_Active_Chat(call.from_user.id)
+        self.kick_members(user_info[3], call.from_user.id)
+        self.unbun_members(user_info[3], call.from_user.id)
+        
+    def dell_message(self, chat_id, user_id):
+        try:
+            self.bot.delete_message(chat_id, user_id)
+        except:
+            Decoration().__write_log(f"Can't delete message {user_id} from chat {chat_id}")
+
     def left_chat_member(self, message):
             user_id = message.from_user.id
             chat_id = message.chat.id
-            self.data_base.dell_user_from_Active_Chat(user_id)
-            self.data_base.change_active_status(user_id, "False")
-            self.upgrade_room_info_time(chat_id)
-            if time.localtime().tm_min != 0:
-                self.bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
+            self.bot.send_message(user_id, REMOVED_FROM_GROUP_TEXT)
             time.sleep(0.5)
             count = self.bot.get_chat_member_count(chat_id) - 1
             self.data_base.update_rooms_users_count(chat_id, count)
             if count == 0:
                 messages = self.data_base.get_messages_from_chat(chat_id)
                 for i in messages:
-                    try: 
-                        self.bot.delete_message(i[0], i[1])
-                    except:
-                        self.bot.send_message(ADMIN_IP_MISHA, f"Error delete_message: {i[0]}, {i[1]}")
+                    self.dell_message(i[0], i[1])
                 self.data_base.delete_chat_messages_from_user(user_id)
-            self.bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+            self.dell_message(chat_id=message.chat.id, message_id=message.message_id)
+            self.data_base.dell_user_from_Active_Chat(user_id)
+            self.data_base.change_active_status(user_id, "False")
+            self.upgrade_room_info_time(chat_id)
             
     def add_chat_into_active(self, message):
-            try:
-                chat_id = message.chat.id
-                if int(message.from_user.id) in TOTAL_ADMINS:
-                    self.data_base.add_chat_into_active(chat_id, message.chat.title)
-                    self.bot.send_message(chat_id, f"Chat added chat_id: {chat_id}")
-                else:
-                    self.bot.send_message(chat_id, "You can't do it")
-            except Exception("add_chat_into_active Wrong") as e:
-                self.bot.send_message(chat_id, e)
+        chat_id = message.chat.id
+        if int(message.from_user.id) in TOTAL_ADMINS():
+            self.data_base.add_chat_into_active(chat_id, message.chat.title)
+            self.bot.send_message(chat_id, f"Chat added chat_id: {chat_id}")
+        else:
+            self.bot.send_message(chat_id, "You can't do it")
                 
     def delete_chat_from_active(self, message):
-        try:
-            chat_id = message.chat.id
-            if int(message.from_user.id) in  TOTAL_ADMINS:
-                self.data_base.delete_chat_from_active(chat_id)
-                self.bot.send_message(chat_id, "Chat deleted")
-            else:
-                self.bot.send_message(chat_id, "You can't do it")
-        except Exception("delete_chat_from_active Wrong") as e:
-            self.bot.send_message(chat_id, e)
+        chat_id = message.chat.id
+        if int(message.from_user.id) in  TOTAL_ADMINS():
+            self.data_base.delete_chat_from_active(chat_id)
+            self.bot.send_message(chat_id, "Chat deleted")
+        else:
+            self.bot.send_message(chat_id, "You can't do it")
             
     def send_start(self, message):
         try:
@@ -365,9 +396,13 @@ class CreativeHour:
                 self.show_time_panel(call)
             elif start_func[0] == 'Hide':
                 self.hide(call)
+            elif start_func[0] == "markdell":
+                self.dell_from_group(call)
+            elif start_func[0] == "tryagain":
+                self.start_search(call)
         else:
             markup = self.have_not_account()
-            self.bot.send_message(call.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
+            self.bot.send_message(call.from_user.id, HAVE_NO_ACCOUNT_TEXT(), reply_markup=markup)
             
     def get_log(self, message):
         try:
@@ -375,11 +410,11 @@ class CreativeHour:
             with open(data, 'rb') as file:
                 self.bot.send_document(message.from_user.id, file)
         except Exception as e:
-            print(e)
+            Decoration().__write_log(e)
         
     def text_holder(self, message):
         self.data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)
-        if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA:
+        if message.text == "Dell all" and message.from_user.id == ADMIN_IP_MISHA():
             self.dell_all()
             return
         elif message.text == "Version":
@@ -388,13 +423,10 @@ class CreativeHour:
 
         if message.text not in ["Info", "Create account", "Set time zone"] and self.data_base.get_one_user(message.from_user.id) is None:
             markup = self.have_not_account()
-            self.bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT, reply_markup=markup)
-        elif self.get_match(message):
-            self.set_time_zone_func(message, self.get_match(message))
-            self.bot.send_message(ADMIN_IP_MISHA, f"User {message.from_user.first_name} set time zone {self.get_match(message)}")
+            self.bot.send_message(message.from_user.id, HAVE_NO_ACCOUNT_TEXT(), reply_markup=markup)
         elif message.text == "Menu":
             markup = self.menu(message)
-            self.bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, CHOOSE_MOUTION_TEXT(), reply_markup=markup)
         elif message.text == "Set time zone":
             self.set_time_zone(message) 
         elif message.text == "Set active time":
@@ -403,35 +435,42 @@ class CreativeHour:
             self.delete_account(message)
         elif message.text == "Info":
             markup = self.menu(message)
-            self.bot.send_message(message.from_user.id, INFO_TEXT, reply_markup=markup)
+            self.bot.send_message(message.from_user.id, INFO_TEXT(), reply_markup=markup)
         elif message.text == "Sure delete me":
             self.sure(message)
         elif message.text == "Create account":
             self.create_account(message)
         elif message.text == "Stop searching":
             self.stop_searching(message)
-        elif message.text == "GET GROUPS":
+        elif message.text == "get_groups":
             groups = self.data_base.get_all_groups()
             for i in groups:
                 link = self.bot.create_chat_invite_link(chat_id=i[1], name=i[2])
                 self.bot.send_message(message.from_user.id, link)
-        elif message.text == "GET STAT 2":
+        elif message.text == "get_stat_1":
             self.get_bd(message, 'Statistic.db', "user_activity_start", ["id", "user_id", "user_name", "came_time"])
             self.get_bd(message, 'Statistic.db', "user_came", ["id", "user_id", "user_name", "chat_id", "came_time"])
-        elif message.text == "GET STAT 1":
+        elif message.text == "get_stat_2":
             self.get_bd(message, 'Statistic.db', "users", ["id", "user_id", "user_name"])
-        elif message.text == "GET DB":
+        elif message.text == "get_db":
             self.get_bd(message,'AsyaApp.db') 
             self.get_bd(message, 'Statistic.db')
         elif message.text == "get_log":
             self.get_log(message)
+        elif self.get_match(message):
+            self.set_time_zone_func(message, self.get_match(message))
+        elif self.match_set_json(message):
+            self.match_set_json_function(message)
+        elif message.text == "get_json":
+            self.get_json(message)
     
     def approve_weit_time(self, update):
-        self.approve_message = self.bot.send_message(update.chat.id, APROVE_MESSAGE)
+        self.approve_message = self.bot.send_message(update.chat.id, APROVE_MESSAGE())
         time.sleep(30)
         if update.from_user.id not in self.users_hello:
             self.kick_members(update.chat.id, update.from_user.id )
-            self.bot.send_message(update.from_user.id, KICK_MESSAGE)
+            self.unbun_members(update.chat.id, update.from_user.id)
+            self.bot.send_message(update.from_user.id, KICK_MESSAGE())
             self.bot.delete_message(update.chat.id, self.approve_message.message_id)
             return
 
@@ -447,14 +486,12 @@ class CreativeHour:
             self.users_hello.append(call.from_user.id)
             self.bot.delete_message(call.chat.id, self.approve_message.message_id)
             threading.Thread(target=self.join_request, args=(call,)).start()
-            # self.bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.first_name} join chat {call.chat.id}")
 
         # If users leave chat
         @self.bot.message_handler(content_types=['left_chat_member'])
         def left_chat_member_handler(update: types.ChatMemberLeft):
             self.check_event()
             self.left_chat_member(update)
-            self.bot.send_message(ADMIN_IP_MISHA, f"{update.from_user.first_name} left chat {update.chat.id}")
 
         # If create new chat
         @self.bot.message_handler(commands=['add_chat_into_active'])
@@ -472,13 +509,11 @@ class CreativeHour:
         def send_start_hanlder(update: types.ChatJoinRequest):
             self.check_event()
             self.send_start(update)
-            self.bot.send_message(ADMIN_IP_MISHA, f"{update.from_user.first_name} start bot")
 
         @self.bot.callback_query_handler(func=lambda call: True)
         def handle_callback_query_handler(call: types.CallbackQuery):
             self.check_event()
             self.handle_callback_query(call)
-            self.bot.send_message(ADMIN_IP_MISHA, f"{call.from_user.first_name} click {call.data}")
 
         @self.bot.message_handler(content_types='text')
         def text_holder_hanlder(call: types.CallbackQuery):
