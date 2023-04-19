@@ -335,7 +335,7 @@ class CreativeHour:
         try:
             self.bot.delete_message(chat_id, user_id)
         except:
-            Decoration().__write_log(f"Can't delete message {user_id} from chat {chat_id}")
+            Decoration()._write_logs(f"Can't delete message {user_id} from chat {chat_id}")
 
     def left_chat_member(self, message):
             user_id = message.from_user.id
@@ -413,7 +413,7 @@ class CreativeHour:
             with open(data, 'rb') as file:
                 self.bot.send_document(message.from_user.id, file)
         except Exception as e:
-            Decoration().__write_log(e)
+            Decoration()._write_logs(e)
         
     def text_holder(self, message):
         self.data_base.write_messag_history(message.chat.id, message.from_user.id, message.id)

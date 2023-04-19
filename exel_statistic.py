@@ -1,7 +1,6 @@
 import sqlite3
 import pandas as pd
 
-# from decoration import decore_bd_function
 from decoration import Decoration
 
 
