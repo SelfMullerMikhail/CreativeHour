@@ -6,7 +6,7 @@ from json_function import JsonConnector
 
 API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
 js_helper = JsonConnector()
-VERSION = "Version 7.9"
+VERSION = "Version 8"
 TIME_FIRE =lambda: js_helper.get_constains("TIME_FIRE")
 PUSHING_TIME =lambda: js_helper.get_constains("PUSHING_TIME")
 ADMIN_IP_MISHA =lambda: js_helper.get_constains("ADMIN_IP_MISHA")
