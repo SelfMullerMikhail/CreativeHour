@@ -494,34 +494,40 @@ class CreativeHour:
         @self.bot.message_handler(content_types=['left_chat_member'])
         def left_chat_member_handler(update: types.ChatMemberLeft):
             self.check_event()
-            self.left_chat_member(update)
+            threading.Thread(target=self.left_chat_member, args=(update,)).start()
+            # self.left_chat_member(update)
 
         # If create new chat
         @self.bot.message_handler(commands=['add_chat_into_active'])
         def add_chat_into_active_handler(update: types.ChatJoinRequest):
             self.check_event()
-            self.add_chat_into_active(update)
+            threading.Thread(target=self.add_chat_into_active, args=(update,)).start()
+            # self.add_chat_into_active(update)
 
         #  If delete chat
         @self.bot.message_handler(commands=['delete_chat_from_active'])
         def delete_chat_from_active_handler(update: types.ChatJoinRequest):
             self.check_event()
-            self.delete_chat_from_active(update)
+            threading.Thread(target=self.delete_chat_from_active, args=(update,)).start()
+            # self.delete_chat_from_active(update)
 
         @self.bot.message_handler(commands=['start'])
         def send_start_hanlder(update: types.ChatJoinRequest):
             self.check_event()
-            self.send_start(update)
+            threading.Thread(target=self.send_start, args=(update,)).start()
+            # self.send_start(update)
 
         @self.bot.callback_query_handler(func=lambda call: True)
         def handle_callback_query_handler(call: types.CallbackQuery):
             self.check_event()
-            self.handle_callback_query(call)
+            threading.Thread(target=self.handle_callback_query, args=(call,)).start()
+            # self.handle_callback_query(call)
 
         @self.bot.message_handler(content_types='text')
         def text_holder_hanlder(call: types.CallbackQuery):
             self.check_event()
-            self.text_holder(call)
+            threading.Thread(target=self.text_holder, args=(call,)).start()
+            # self.text_holder(call)
         self.bot.polling(none_stop=True)
 
 
