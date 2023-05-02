@@ -166,3 +166,4 @@ testBD/*
 sql_files/*
 !fire_members_logs/
 !error_logs/
+test.py

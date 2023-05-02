@@ -1,12 +1,15 @@
+import os
 from json_function import JsonConnector
 
 # Test
-# API = '5957038360:AAHpAktp-nB1wYCsLofMa_IK-TJFo8hgZYM' 
+# API = '5957038360:AAHos-waB7M0e5C3p0cb9En53lLtDsEPiaA' 
 # Work
+# API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
 
-API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
+API = os.getenv('API')
 js_helper = JsonConnector()
 VERSION = "Version 8.1"
+START_TIME = "\n\nStart time - End time"
 TIME_FIRE =lambda: js_helper.get_constains("TIME_FIRE")
 PUSHING_TIME =lambda: js_helper.get_constains("PUSHING_TIME")
 ADMIN_IP_MISHA =lambda: js_helper.get_constains("ADMIN_IP_MISHA")
