@@ -1,10 +1,8 @@
 import os
 from json_function import JsonConnector
 
-# Test
-# API = '5957038360:AAHos-waB7M0e5C3p0cb9En53lLtDsEPiaA' 
-# Work
-# API = '5947528384:AAHsWuJ87P9lQV6WdRKU-9QnfhEML9ZDw_0'
+# from test import API_TEST
+# API = API_TEST
 
 API = os.getenv('API')
 js_helper = JsonConnector()
