@@ -2,11 +2,11 @@ import os
 from json_function import JsonConnector
 
 # from test import API_TEST
-# API = API_TEST
+# # API = API_TEST
 
 API = os.getenv('API')
 js_helper = JsonConnector()
-VERSION = "Version 8.1"
+VERSION = "Version 8.2"
 START_TIME = "\n\nStart time - End time"
 TIME_FIRE =lambda: js_helper.get_constains("TIME_FIRE")
 PUSHING_TIME =lambda: js_helper.get_constains("PUSHING_TIME")
