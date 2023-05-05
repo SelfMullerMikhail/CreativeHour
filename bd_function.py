@@ -1,12 +1,21 @@
+import os
 import sqlite3
 from decoration import Decoration
+
 from functools import wraps
+from google_cloud_connector import google_cloud_connection
+
+from CONSTAINS import BUCKET_NAME
 
 def with_cursor(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         database = self.database
-        with sqlite3.connect(database) as conn:
+        blob, temp_file = google_cloud_connection(file_config="gracefull_obj.json",
+                                bucket_name=BUCKET_NAME,
+                                file_name=database)
+        
+        with sqlite3.connect(temp_file) as conn:
             conn.execute('PRAGMA encoding = "UTF-8"')
             cursor = conn.cursor()
             try:
@@ -15,22 +24,14 @@ def with_cursor(method):
                 Decoration._write_logs(str(e))
             finally:
                 cursor.close()
+                blob.upload_from_filename(temp_file)
+                os.remove(temp_file)
     return wrapper
 
 class BdHelper:
     
     def __init__(self, database):
         self.database = database
-    
-    def __get_cursor(self):
-        try:
-            conn = sqlite3.connect(self.database)
-            conn.execute('PRAGMA encoding = "UTF-8"')
-            cursor = conn.cursor()
-            return cursor, conn
-        except Exception as e:
-            self.__close_cursor_and_conn(cursor, conn)
-            Decoration._write_logs(str(e))
     
     @with_cursor
     def user_push_start(self, cursor, user_id, user_name):

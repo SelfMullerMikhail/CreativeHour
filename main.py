@@ -11,7 +11,8 @@ from exel_statistic import ExelCreator
 from CONSTAINS import *
 from time_cheker_threading import TimeCheker
 from decoration import Decoration
-from json_function import JsonConnector 
+from json_function import JsonConnector
+from gracefull_creator import ConfigFiles
 
 class CreativeHour:
     def __init__(self, API, event):
@@ -95,15 +96,7 @@ class CreativeHour:
                                         message.text.split()[2:])
             return True
         except Exception as e:
-            Decoration()._write_logs(str(e))
-            
-    def get_json(self, message):
-        try:
-            self.try_send_message(message.from_user.id, JsonConnector().
-                                info_from_json())
-        except Exception as e:
-            Decoration()._write_logs(e)
-                        
+            Decoration()._write_logs(str(e))            
 
     def set_active_time_text(self, message, markup):
             self.try_send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT(),
@@ -478,14 +471,6 @@ class CreativeHour:
             markup = self.have_not_account()
             self.try_send_message(call.from_user.id, 
                 HAVE_NO_ACCOUNT_TEXT(), reply_markup=markup)
-            
-    def get_log(self, message):
-        try:
-            data = os.path.join(os.getcwd(), "error_logs", "logs.txt")
-            with open(data, 'rb') as file:
-                self.bot.send_document(message.from_user.id, file)
-        except Exception as e:
-            Decoration()._write_logs(e)
         
     def text_holder(self, message):
         self.data_base.write_messag_history(message.chat.id, 
@@ -529,6 +514,7 @@ class CreativeHour:
                 link = self.bot.create_chat_invite_link(chat_id=i[1],
                     name=i[2])
                 self.try_send_message(message.from_user.id, link)
+                
         elif message.text == "get_stat_1":
             self.get_bd(message, 'Statistic.db', "user_activity_start", 
                 ["id", "user_id", "user_name", "came_time"])
@@ -537,17 +523,11 @@ class CreativeHour:
         elif message.text == "get_stat_2":
             self.get_bd(message, 'Statistic.db', "users",
                 ["id", "user_id", "user_name"])
-        elif message.text == "get_db":
-            self.get_bd(message,'AsyaApp.db') 
-            self.get_bd(message, 'Statistic.db')
-        elif message.text == "get_log":
-            self.get_log(message)
+            
         elif self.get_match(message):
             self.set_time_zone_func(message, self.get_match(message))
         elif self.match_set_json(message):
             self.match_set_json_function(message)
-        elif message.text == "get_json":
-            self.get_json(message)
     
     def approve_weit_time(self, update):
         self.approve_message = self.try_send_message(update.chat.id, 
@@ -621,6 +601,8 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
+            ConfigFiles.gracefull_create()
+            ConfigFiles.constants_create()
             event = threading.Event()
             bot = CreativeHour(API, event)
             time_cheker = TimeCheker(event, bot=bot)

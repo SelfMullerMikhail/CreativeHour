@@ -4,10 +4,11 @@ from json_function import JsonConnector
 # from test import API_TEST
 # # API = API_TEST
 
-API = os.getenv('API')
 js_helper = JsonConnector()
-VERSION = "Version 8.2"
+VERSION = "Version 9"
 START_TIME = "\n\nStart time - End time"
+API = os.getenv('API')
+BUCKET_NAME = os.getenv('BUCKET_NAME')
 TIME_FIRE =lambda: js_helper.get_constains("TIME_FIRE")
 PUSHING_TIME =lambda: js_helper.get_constains("PUSHING_TIME")
 ADMIN_IP_MISHA =lambda: js_helper.get_constains("ADMIN_IP_MISHA")
