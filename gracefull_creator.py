@@ -13,7 +13,7 @@ class ConfigFiles:
     @classmethod
     def gracefull_create(self):
         self.obj = {}
-        self.obj["type"] = os.getenv('service_account')
+        self.obj["type"] = os.getenv('type')
         self.obj["project_id"] = os.getenv("project_id")
         self.obj["private_key_id"] = os.getenv("private_key_id")
         self.obj["private_key"] = os.getenv("private_key")
@@ -29,7 +29,6 @@ class ConfigFiles:
     @classmethod
     def constants_create(self):
         try:
-            print("func")
             google_cloud_connection(file_config="gracefull_obj.json",
                                     file_name="CONSTANT.json",
                                     bucket_name=BUCKET_NAME)
