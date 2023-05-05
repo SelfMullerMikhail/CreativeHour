@@ -9,7 +9,7 @@ API = os.getenv('API')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 js_helper = JsonConnector()
-VERSION = "Version 9.1"
+VERSION = "Version 9.4"
 START_TIME = "\n\nStart time - End time"
 TIME_FIRE =lambda: js_helper.get_constains("TIME_FIRE")
 PUSHING_TIME =lambda: js_helper.get_constains("PUSHING_TIME")
