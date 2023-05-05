@@ -26,10 +26,13 @@ def with_cursor(method):
                 Decoration._write_logs(str(e))
             finally:
                 cursor.close()
-
-        conn.close()
-        os.remove(temp_file)
-        return func
+        try:
+            conn.close()
+            os.remove(temp_file)
+        except Exception as e:
+            Decoration._write_logs(e)
+        finally:
+            return func
     return wrapper
 
 class BdHelper:

@@ -5,6 +5,7 @@ from google_cloud_connector import google_cloud_connection
 
 class Decoration:
 
+    @classmethod
     def _write_logs(self, info: str):
         data = "logs.txt"
         blob, temp_file = google_cloud_connection(file_config="gracefull_obj.json", 
@@ -15,7 +16,7 @@ class Decoration:
             file.write(f"{os.linesep}{time} {info}")
         blob.upload_from_filename(temp_file)
 
-
+    @classmethod
     def decore_bd_function(self, func):
         def wrapper(*args):
             try:

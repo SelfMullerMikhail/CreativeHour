@@ -35,14 +35,14 @@ class CreativeHour:
         try:
             self.bot.kick_chat_member(chat_id=chat_id, user_id= user_id)
         except:
-            Decoration()._write_logs(f"""Error kick_members {user_id} from 
+            Decoration._write_logs(f"""Error kick_members {user_id} from 
                                     {chat_id}""")
     
     def unbun_members(self, chat_id:int, user_id:int):
         try:
             self.bot.unban_chat_member(chat_id=chat_id, user_id= user_id)
         except:
-            Decoration()._write_logs(f"""Error unbun_members {user_id} from 
+            Decoration._write_logs(f"""Error unbun_members {user_id} from 
                                     {chat_id}""")
             
     def already_in_group(self, message, markup):
@@ -70,7 +70,7 @@ class CreativeHour:
             else:
                 return self.bot.send_message(chat, message)
         except Exception as e:
-            Decoration()._write_logs(e)
+            Decoration._write_logs(e)
 
     def dell_all(self):
             users = self.data_base.get_all_users()
@@ -95,7 +95,7 @@ class CreativeHour:
                                         message.text.split()[2:])
             return True
         except Exception as e:
-            Decoration()._write_logs(str(e))            
+            Decoration._write_logs(str(e))            
 
     def set_active_time_text(self, message, markup):
             self.try_send_message(message.from_user.id, SET_ACTIVE_TIME_TEXT(),
@@ -115,7 +115,7 @@ class CreativeHour:
                 self.try_send_message(user[0], link.invite_link,
                                     reply_markup=markup)
             except:
-                (Decoration()._write_logs
+                (Decoration._write_logs
                 (f"Error send_links_to_users {user[0]}"))
 
     def create_account(self, message):
@@ -366,7 +366,7 @@ class CreativeHour:
             with open(db_name, 'rb') as file:
                 self.bot.send_document(message.from_user.id, file)
         except Exception as e:
-            Decoration()._write_logs(e)
+            Decoration._write_logs(e)
             
     def join_request(self, update: types.ChatJoinRequest):
         self.bot.delete_message(chat_id=update.chat.id, 
@@ -395,7 +395,7 @@ class CreativeHour:
         try:
             self.bot.delete_message(chat_id, user_id)
         except:
-            (Decoration().
+            (Decoration.
             _write_logs(f"Can't delete message {user_id} from chat {chat_id}"))
 
     def left_chat_member(self, message):
@@ -610,5 +610,5 @@ if __name__ == '__main__':
             t.start()
             time.sleep(10)
         except Exception as e:
-            Decoration()._write_logs(e)
+            Decoration._write_logs(e)
             print(e)

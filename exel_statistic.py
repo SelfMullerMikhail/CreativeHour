@@ -14,18 +14,18 @@ class ExelCreator():
     def __init__(self) -> None:
         self.db_name = 'Statistic.db'
     
-    @Decoration().decore_bd_function
+    @Decoration.decore_bd_function
     def get_cursor(self):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         return conn, cursor
     
-    @Decoration().decore_bd_function
+    @Decoration.decore_bd_function
     def close_cursor(self, cursor, conn):
         cursor.close()
         conn.close()
     
-    @Decoration().decore_bd_function
+    @Decoration.decore_bd_function
     def get_statistic_exel(self, table_name:str, columns: list):
         
         database = self.database

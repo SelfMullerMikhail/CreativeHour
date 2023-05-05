@@ -11,7 +11,7 @@ class TimeCheker:
         self.bot = bot
         self.event = event
         
-    @Decoration().decore_bd_function
+    @Decoration.decore_bd_function
     def kick_members(self, users):
         for user in users:
             time.sleep(0.2)
@@ -19,7 +19,7 @@ class TimeCheker:
             self.bot.unbun_members(user[3], user[0])
                 
 
-    @Decoration().decore_bd_function
+    @Decoration.decore_bd_function
     def send_pushing(self, users_wake_up):
         for user in users_wake_up:
             time.sleep(0.2)
