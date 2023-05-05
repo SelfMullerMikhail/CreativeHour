@@ -599,7 +599,7 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
-            # ConfigFiles.gracefull_create()
+            ConfigFiles.gracefull_create()
             ConfigFiles.constants_create()
             event = threading.Event()
             bot = CreativeHour(API, event)
