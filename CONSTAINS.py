@@ -1,9 +1,9 @@
 import os
 from json_function import JsonConnector
 
-from test import API_TEST
+# from test import API_TEST
 # API = API_TEST
-BUCKET_NAME = "creative_houre_bucket"
+# BUCKET_NAME = "creative_houre_bucket"
 
 API = os.getenv('API')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
