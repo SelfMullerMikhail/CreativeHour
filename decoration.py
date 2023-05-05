@@ -1,14 +1,19 @@
 import os
 import datetime
-from CONSTAINS import ADMIN_IP_MISHA
+from CONSTAINS import BUCKET_NAME
+from google_cloud_connector import google_cloud_connection
 
 class Decoration:
 
     def _write_logs(self, info: str):
-        data = os.path.join(os.getcwd(), "error_logs", "logs")
-        with open(f"{data}.txt", "a") as file:
-            time = datetime.datetime.now().strftime("%H:%M:%S")
+        data = "logs.txt"
+        blob, temp_file = google_cloud_connection(file_config="gracefull_obj.json", 
+                                                file_name = data,
+                                                bucket_name=BUCKET_NAME)
+        with open(f"{temp_file}", "a") as file:
+            time = datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")
             file.write(f"{os.linesep}{time} {info}")
+        blob.upload_from_filename(temp_file)
 
 
     def decore_bd_function(self, func):
