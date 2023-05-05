@@ -7,9 +7,11 @@ from CONSTAINS import BUCKET_NAME
 
 class ConfigFiles:
     def __init__(self):
-        self.obj = {}
+        ...
     
+    @classmethod
     def gracefull_create(self):
+        self.obj = {}
         self.obj["type"] = os.getenv('service_account')
         self.obj["project_id"] = os.getenv("project_id")
         self.obj["private_key_id"] = os.getenv("private_key_id")
@@ -24,8 +26,15 @@ class ConfigFiles:
         with open("gracefull_obj.json", "w") as f:
             json.dump(self.obj, f)
             
+    @classmethod
     def constants_create(self):
-        google_cloud_connection(file_config="gracefull_obj.json",
-                                file_name="CONSTANT.json",
-                                bucket_name=BUCKET_NAME)
-        
+        try:
+            print("func")
+            google_cloud_connection(file_config="gracefull_obj.json",
+                                    file_name="CONSTANT.json",
+                                    bucket_name=BUCKET_NAME)
+        except Exception as e:
+            print(e)
+            
+if __name__ == "__main__":
+    ConfigFiles.constants_create()

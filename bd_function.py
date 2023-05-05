@@ -19,13 +19,17 @@ def with_cursor(method):
             conn.execute('PRAGMA encoding = "UTF-8"')
             cursor = conn.cursor()
             try:
-                return method(self, cursor, *args, **kwargs)
+                func = method(self, cursor, *args, **kwargs)
+                conn.commit()
+                blob.upload_from_filename(temp_file)
             except Exception as e:
                 Decoration._write_logs(str(e))
             finally:
                 cursor.close()
-                blob.upload_from_filename(temp_file)
-                os.remove(temp_file)
+
+        conn.close()
+        os.remove(temp_file)
+        return func
     return wrapper
 
 class BdHelper:

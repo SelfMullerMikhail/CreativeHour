@@ -17,6 +17,6 @@ class Decoration:
                 info = func(*args)
                 return info
             except Exception as e:
-                print(e)
+                print(func, e)
                 self._write_logs(str(e))
         return wrapper

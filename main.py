@@ -91,7 +91,6 @@ class CreativeHour:
     
     def match_set_json_function(self, message):
         try:
-            print(message.text.split()[2:])
             JsonConnector().info_in_json(message.text.split()[1],
                                         message.text.split()[2:])
             return True
@@ -592,7 +591,6 @@ class CreativeHour:
         @self.bot.message_handler(content_types='text')
         def text_holder_hanlder(call: types.CallbackQuery):
             self.check_event()
-            print("hey")
             threading.Thread(target=self.text_holder, args=(call,)).start()
         self.bot.polling(none_stop=True)
 
@@ -601,7 +599,7 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
-            ConfigFiles.gracefull_create()
+            # ConfigFiles.gracefull_create()
             ConfigFiles.constants_create()
             event = threading.Event()
             bot = CreativeHour(API, event)

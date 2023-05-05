@@ -2,10 +2,11 @@ import os
 from json_function import JsonConnector
 
 # from test import API_TEST
-# # API = API_TEST
+# API = API_TEST
+# BUCKET_NAME = "creative_houre_bucket"
 
 js_helper = JsonConnector()
-VERSION = "Version 9"
+VERSION = "Version 9.1"
 START_TIME = "\n\nStart time - End time"
 API = os.getenv('API')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
