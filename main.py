@@ -603,9 +603,7 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
-            info = ConfigFiles.gracefull_create()
-            with open("logs.txt", "w") as f:
-                f.write(str(info))
+            ConfigFiles.gracefull_create()
             ConfigFiles.constants_create()
             event = threading.Event()
             bot = CreativeHour(API, event)
