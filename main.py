@@ -474,6 +474,10 @@ class CreativeHour:
     def text_holder(self, message):
         self.data_base.write_messag_history(message.chat.id, 
             message.from_user.id, message.id)
+        
+        if message.text == "get_logs":
+            with open("logs.txt", "r") as f:
+                self.bot.send_message(ADMIN_IP_MISHA, f)
         if (message.text == "Dell all" and message.from_user.id 
             == ADMIN_IP_MISHA()):
             self.dell_all()
@@ -599,7 +603,9 @@ class CreativeHour:
 if __name__ == '__main__':
     while True:
         try:
-            ConfigFiles.gracefull_create()
+            info = ConfigFiles.gracefull_create()
+            with open("logs.txt", "w") as f:
+                f.write(str(info))
             ConfigFiles.constants_create()
             event = threading.Event()
             bot = CreativeHour(API, event)
