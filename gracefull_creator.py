@@ -25,7 +25,7 @@ class ConfigFiles:
                 }
         self.__privat_key = os.getenv("private_key")
         self.obj["private_key_id"] = os.getenv("private_key_id")
-        self.obj["private_key"] = f"-----BEGIN PRIVATE KEY-----{self.__privat_key}\n-----END PRIVATE KEY-----\n",
+        self.obj["private_key"] = f"-----BEGIN PRIVATE KEY-----{self.__privat_key}-----END PRIVATE KEY-----\n",
         with open("gracefull_obj.json", "w") as f:
             json.dump(self.obj, f)
         return self.obj
