@@ -1,5 +1,5 @@
 import time
-import threading
+import datetime as dt
 
 from bd_function import BdHelper
 from CONSTAINS import TIME_FIRE, PUSHING_TIME, MORNING_MESSAGE
@@ -28,7 +28,7 @@ class TimeCheker:
     def time_cheker(self):
             while True:
                 self.event.set()
-                users = self.database.get_ReadyUser_from_time(TIME_FIRE(), "view_persons_in_chats") 
+                users = self.database.get_ReadyUser_from_time(TIME_FIRE(), "view_persons_in_chats")
                 self.kick_members(users)
                 users_wake_up = self.database.get_ReadyUser_from_time(PUSHING_TIME(), "ReadyUsers")
                 self.send_pushing(users_wake_up)

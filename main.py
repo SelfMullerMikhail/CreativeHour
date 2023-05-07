@@ -610,9 +610,8 @@ if __name__ == '__main__':
             time_cheker = TimeCheker(event, bot=bot)
             t = threading.Thread(target=time_cheker.time_cheker)
             t.daemon = True 
-            bot.start()
             t.start()
-            time.sleep(10)
+            bot.start()
         except Exception as e:
             Decoration._write_logs(e)
             print(e)
